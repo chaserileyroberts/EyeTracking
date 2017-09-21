@@ -1,6 +1,5 @@
 import tensorflow as tf
 
-
 slim = tf.contrib.slim
 
 
@@ -13,6 +12,12 @@ class EyeConvnet():
       face_tensor: 4D Tensor. Photo of the cropped face.
       left_eye_tensor: 4D Tensor. Photo of cropped left eye.
       right_eye_tensor: 4D Tensor. Photo of cropped right eye.
+    Attributes:
+      self.face_tensor: The 4D tensor of the face. Same as passed in.
+      self.left_eye_tensor: The 4D tensor of the left eye. Same as passed in.
+      self.right_eye_tensor: The 4D tensor of the right eye. Same as passed in.
+      self.prediction: 2D tensor of shape (batch_size, 2). Represents the
+          (x, y) of the predicted direction. 
     """
     # Set the variables.
     self.is_training= is_training

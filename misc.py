@@ -9,7 +9,8 @@ import scipy.io as sio
 import scipy
 import numpy as np
 import matplotlib.pyplot as plt
-import cv2
+
+
 def rodrigues(r):
     def S(n):
         Sn = np.array([[0,-n[2],n[1]],[n[2],0,-n[0]],[-n[1],n[0],0]])
