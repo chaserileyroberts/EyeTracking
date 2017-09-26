@@ -1,8 +1,8 @@
 import tensorflow as tf
 import Trainer
 
-kang_day_1 = './data_kang/day01/Center/data.mat'
-kang_day_2 = './data_kang/day02/Center/data.mat'
+kang_day_1 = './kang/day01/Center/data.mat'
+kang_day_2 = './kang/day02/Center/data.mat'
 
 def setup_function(fnc):
   tf.reset_default_graph()

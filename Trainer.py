@@ -1,3 +1,6 @@
+from __future__ import print_function
+
+
 import tensorflow as tf
 import EyeConvnet
 from misc import loadmat
@@ -16,7 +19,7 @@ class Trainer():
     # We'll test and debug latter if that is the case.
     dataset = None
     for i,file_name in enumerate(mat_files):
-      print "Reading file", file_name
+      print("Reading file", file_name)
       data = loadmat(file_name)
       tmp_dataset = tf.contrib.data.Dataset.from_tensor_slices(
           (data['face'], data['eye_left'], data['eye_right'], data['gaze']))
@@ -65,7 +68,7 @@ class Trainer():
     if self.save_dest:
       writer = tf.summary.FileWriter(self.save_dest, self.sess.graph)
     for i in xrange(training_steps):
-      print "On training_step", i
+      print("On training_step", i)
       summary, _ = self.sess.run([merged, train])
       if self.save_dest:    
         writer.add_summary(summary, global_step=i)
