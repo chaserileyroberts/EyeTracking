@@ -67,7 +67,7 @@ class Trainer():
       saver.restore(self.sess, restore)
     if self.save_dest:
       writer = tf.summary.FileWriter(self.save_dest, self.sess.graph)
-    for i in xrange(training_steps):
+    for i in range(training_steps):
       print("On training_step", i)
       summary, _ = self.sess.run([merged, train])
       if self.save_dest:    
