@@ -7,7 +7,7 @@ def image_preprocess(image):
   Returns:
     float_image: Tensor float32 array with range (-1, 1)
   """
-  return (tf.to_float(image)/ 127.5) - 1
+  return (tf.to_float(image)/ 127.5) - 1.0
 
 def gaze_images_preprocess(face, left, right, gaze):
   """Preprocesses all of the gaze images.

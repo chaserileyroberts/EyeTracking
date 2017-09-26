@@ -5,18 +5,25 @@ import Preprocess
 
 
 class Trainer():
-  def __init__(self, sess, mat_file, batch_size=32, save_dest=None):
+  def __init__(self, sess, mat_files, batch_size=32, save_dest=None):
     """Trainer object.
     Args:
-      mat_files: File names to the '.mat' data file.
+      mat_filess: List of file names to the '.mat' data files.
         TODO(Chase): Add multi file support.
       batch_size: Batch size to use for training.
       save_dest: Where to save the saved models and tensorboard events.
-    """ 
-    # TODO(Chase): Read in all of the .mat files, make queues for the data. 
-    data = loadmat(mat_file)
-    dataset = tf.contrib.data.Dataset.from_tensor_slices(
-        (data['face'], data['eye_left'], data['eye_right'], data['gaze']))
+    """
+    dataset = None
+    for i,file_name in enumerate(mat_files):
+      print "Reading file", file_name
+      data = loadmat(file_name)
+      tmp_dataset = tf.contrib.data.Dataset.from_tensor_slices(
+          (data['face'], data['eye_left'], data['eye_right'], data['gaze']))
+      if i == 0: # initial concatenation. 
+        dataset = tmp_dataset
+      else:
+        dataset = dataset.concatenate(tmp_dataset)
+    # TODO(Chase): Read in multiple files.
     dataset = dataset.map(Preprocess.gaze_images_preprocess)
     dataset = dataset.shuffle(buffer_size=10000)
     dataset = dataset.batch(32)
@@ -42,16 +49,22 @@ class Trainer():
           restored.
     """
     # TODO(Chase):
-    # This is super slow and does a ton of unnessissary copying. 
-    # To fix this, we need to transfer the .mat files into tfrecords.
-    # But this will work for now.
-    # TODO(Chase):
     # Should the optimizer and loss be in the model code?
     opt = tf.train.AdamOptimizer()
     loss = tf.losses.mean_squared_error(self.gaze, self.model.prediction)
+    tf.summary.scalar("loss", loss)
     train = opt.minimize(loss)
     self.sess.run(self.iterator.initializer)
     self.sess.run(tf.global_variables_initializer())
+    merged = tf.summary.merge_all()
+    saver = tf.train.Saver()
+    if restore:
+      saver.restore(sess, restore)
+    if self.save_dest:
+      writer = tf.summary.FileWriter(self.save_dest, self.sess.graph)
     for i in xrange(training_steps):
-      self.sess.run(train)    
+      print "On training_step", i
+      summary, _ = self.sess.run([merged, train])
+      if self.save_dest:    
+        writer.add_summary(summary, global_step=i)
   
