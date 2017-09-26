@@ -31,5 +31,5 @@ kang_small = kang_center_files[:2]
 
 if __name__ == '__main__':
   sess = tf.Session()
-  trainer = Trainer.Trainer(sess, kang_small, save_dest="./models")
-  trainer.train(1000)
+  trainer = Trainer.Trainer(sess, kang_small, batch_size=1, save_dest="./models")
+  trainer.train(10)
