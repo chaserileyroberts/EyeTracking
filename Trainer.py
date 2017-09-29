@@ -9,7 +9,7 @@ import Preprocess
 
 
 def read_mat_files(file_name):
-  file_name = str(file_name)  
+  file_name = file_name.decode('utf-8')
   data = loadmat(file_name)
   return (data['face'], 
           data['eye_left'],
