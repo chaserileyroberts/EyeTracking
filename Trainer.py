@@ -3,11 +3,20 @@ from __future__ import print_function
 
 import tensorflow as tf
 import EyeConvnet
+import numpy as np
 from misc import loadmat
 import Preprocess
 
 
+def read_mat_files(file_name):
+  data = loadmat(file_name)
+  return (data['face'], 
+          data['eye_left'],
+          data['eye_right'], 
+          data['gaze'].astype(np.float32))
+
 class Trainer():
+  
   def __init__(self, sess, mat_files, batch_size=32, save_dest=None):
     """Trainer object.
     Args:
@@ -16,8 +25,17 @@ class Trainer():
       save_dest: Where to save the saved models and tensorboard events.
     """
     # TODO(Chase): This may not work beyond some large files. 
-    # We'll test and debug latter if that is the case.
-    dataset = None
+    # We'll test and debug later if that is the case.
+    
+
+    filenames = tf.contrib.data.Dataset.from_tensor_slices(mat_files)
+    dataset = filenames.flat_map(lambda file_name:
+        tf.contrib.data.Dataset.from_tensor_slices(
+            tuple(tf.py_func(
+                read_mat_files, [file_name], 
+                # Face,    Left,     Right,     Gaze
+                [tf.uint8, tf.uint8, tf.uint8, tf.float32]))))
+    """
     for i,file_name in enumerate(mat_files):
       print("Reading file", file_name)
       data = loadmat(file_name)
@@ -27,6 +45,7 @@ class Trainer():
         dataset = tmp_dataset
       else:
         dataset = dataset.concatenate(tmp_dataset)
+    """
     # TODO(Chase): Read in multiple files.
     dataset = dataset.map(Preprocess.gaze_images_preprocess)
     dataset = dataset.shuffle(buffer_size=10000)
@@ -34,9 +53,14 @@ class Trainer():
     dataset = dataset.repeat()
     self.iterator = dataset.make_initializable_iterator()
     (self.face_tensor, 
-     self.left_eye_tensor, 
-     self.right_eye_tensor,
-     self.gaze) = self.iterator.get_next()
+    self.left_eye_tensor, 
+    self.right_eye_tensor,
+    self.gaze) = self.iterator.get_next()
+    
+    self.face_tensor.set_shape((None, 128, 128, 3))
+    self.left_eye_tensor.set_shape((None, 36, 60, 3))
+    self.right_eye_tensor.set_shape((None, 36, 60, 3))
+    self.gaze.set_shape((None, 2))
     self.sess = sess
     self.save_dest = save_dest
     self.model = EyeConvnet.EyeConvnet(
@@ -57,11 +81,10 @@ class Trainer():
     # TODO(Chase): Include validation testing during training.
     opt = tf.train.AdamOptimizer()
     loss = tf.losses.mean_squared_error(self.gaze, self.model.prediction)
-    tf.summary.scalar("loss", loss)
+    merged = tf.summary.scalar("loss", loss)
     train = opt.minimize(loss)
     self.sess.run(self.iterator.initializer)
     self.sess.run(tf.global_variables_initializer())
-    merged = tf.summary.merge_all()
     saver = tf.train.Saver()
     if restore:
       saver.restore(self.sess, restore)
