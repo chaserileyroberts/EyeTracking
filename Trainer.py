@@ -9,6 +9,7 @@ import Preprocess
 
 
 def read_mat_files(file_name):
+  file_name = str(file_name)  
   data = loadmat(file_name)
   return (data['face'], 
           data['eye_left'],
@@ -35,17 +36,6 @@ class Trainer():
                 read_mat_files, [file_name], 
                 # Face,    Left,     Right,     Gaze
                 [tf.uint8, tf.uint8, tf.uint8, tf.float32]))))
-    """
-    for i,file_name in enumerate(mat_files):
-      print("Reading file", file_name)
-      data = loadmat(file_name)
-      tmp_dataset = tf.contrib.data.Dataset.from_tensor_slices(
-          (data['face'], data['eye_left'], data['eye_right'], data['gaze']))
-      if i == 0: # initial concatenation. 
-        dataset = tmp_dataset
-      else:
-        dataset = dataset.concatenate(tmp_dataset)
-    """
     # TODO(Chase): Read in multiple files.
     dataset = dataset.map(Preprocess.gaze_images_preprocess)
     dataset = dataset.shuffle(buffer_size=10000)
