@@ -20,7 +20,7 @@ class EyeConvnet():
           (x, y) of the predicted direction. 
     """
     # Set the variables.
-    self.is_training= is_training
+    self.is_training = is_training
     self.face_tensor = face_tensor
     self.left_eye_tensor = left_eye_tensor
     self.right_eye_tensor = right_eye_tensor

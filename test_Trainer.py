@@ -8,21 +8,21 @@ def setup_function(fnc):
   tf.reset_default_graph()
 
 def test_sanity_trainer_build():
-  Trainer.Trainer(tf.Session(), [kang_day_1], batch_size=2)
+  Trainer.Trainer([kang_day_1], batch_size=1)
 
 def test_training_single_step_sanity():
-  trainer = Trainer.Trainer(tf.Session(), [kang_day_1], batch_size=2)
+  trainer = Trainer.Trainer([kang_day_1], batch_size=1)
   trainer.train(1)
 
 def test_training_step_with_saving(tmpdir):
-  trainer = Trainer.Trainer(tf.Session(), [kang_day_1], 
-                            batch_size=2,
+  trainer = Trainer.Trainer([kang_day_1], 
+                            batch_size=1,
                             save_dest=str(tmpdir.join("test_model")))
   trainer.train(1)
 
 def test_multiple_files():
-  trainer = Trainer.Trainer(tf.Session(), [kang_day_1, kang_day_2], 
-                            batch_size=2)
+  trainer = Trainer.Trainer([kang_day_1, kang_day_2], 
+                            batch_size=1)
   trainer.train(1)
 
 def test_restoring(tmpdir):

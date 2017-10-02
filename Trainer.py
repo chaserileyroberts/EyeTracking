@@ -8,6 +8,8 @@ from misc import loadmat
 import Preprocess
 
 
+slim = tf.contrib.slim
+
 def read_mat_files(file_name):
   file_name = file_name.decode('utf-8')
   data = loadmat(file_name)
@@ -18,7 +20,7 @@ def read_mat_files(file_name):
 
 class Trainer():
   
-  def __init__(self, sess, mat_files, batch_size=32, save_dest=None):
+  def __init__(self, mat_files, batch_size=32, save_dest=None):
     """Trainer object.
     Args:
       mat_filess: List of file names to the '.mat' data files.
@@ -46,12 +48,11 @@ class Trainer():
     self.left_eye_tensor, 
     self.right_eye_tensor,
     self.gaze) = self.iterator.get_next()
-    
+    self.gaze = self.gaze / (2900, 1600) # Dimensions of the monitor.
     self.face_tensor.set_shape((None, 128, 128, 3))
     self.left_eye_tensor.set_shape((None, 36, 60, 3))
     self.right_eye_tensor.set_shape((None, 36, 60, 3))
     self.gaze.set_shape((None, 2))
-    self.sess = sess
     self.save_dest = save_dest
     self.model = EyeConvnet.EyeConvnet(
         True,
@@ -69,21 +70,18 @@ class Trainer():
     # TODO(Chase):
     # Should the optimizer and loss be in the model code?
     # TODO(Chase): Include validation testing during training.
+    if restore is not None:
+      raise NotImplementedError("Restore is not implemented")
     opt = tf.train.AdamOptimizer()
     loss = tf.losses.mean_squared_error(self.gaze, self.model.prediction)
-    merged = tf.summary.scalar("loss", loss)
-    train = opt.minimize(loss)
-    self.sess.run(self.iterator.initializer)
-    self.sess.run(tf.global_variables_initializer())
-    saver = tf.train.Saver()
-    if restore:
-      saver.restore(self.sess, restore)
-    if self.save_dest:
-      writer = tf.summary.FileWriter(self.save_dest, self.sess.graph)
-    for i in range(training_steps):
-      print("On training_step", i)
-      summary, _ = self.sess.run([merged, train])
-      if self.save_dest:    
-        writer.add_summary(summary, global_step=i)
-      if i % 100 == 0 and self.save_dest:
-        saver.save(self.sess, self.save_dest + "/model", global_step=i)
+    tf.summary.scalar("loss", loss)
+    train_op = slim.learning.create_train_op(loss, opt)
+    init_op = tf.group(self.iterator.initializer, 
+                       tf.global_variables_initializer())
+    slim.learning.train(
+        train_op,
+        self.save_dest,
+        number_of_steps=training_steps,
+        init_op=init_op,
+        save_summaries_secs=300,
+        save_interval_secs=600)
