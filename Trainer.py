@@ -81,6 +81,7 @@ class Trainer():
     slim.learning.train(
         train_op,
         self.save_dest,
-        log_every_n_steps=1,
+        log_every_n_
         number_of_steps=training_steps,
-        init_op=init_op)
+        init_op=init_op,
+        save_summaries_secs=10)

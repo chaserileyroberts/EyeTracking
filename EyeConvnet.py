@@ -73,6 +73,9 @@ class EyeConvnet():
       net = slim.conv2d(image_input, 128, [3, 3], scope="conv4_3x3")
       net = slim.max_pool2d(net, [2, 2], scope='pool2')
       net = slim.conv2d(image_input, 128, [3, 3], scope="conv5_3x3")
+      net = slim.max_pool2d(net, [2, 2], scope='pool3')
+      net = slim.conv2d(image_input, 32, [3, 3], scope="conv6_3x3")            
+      net = slim.max_pool2d(net, [2, 2], scope='pool4')
       return net
   
   def make_eye_branch(self, image_input):
@@ -87,5 +90,5 @@ class EyeConvnet():
       net = slim.conv2d(image_input, 64, [5, 5], scope="conv1_5x5")
       net = slim.conv2d(image_input, 64, [5, 5], scope="conv2_5x5")
       net = slim.conv2d(image_input, 64, [3, 3], scope="conv3_3x3")
-      net = slim.conv2d(image_input, 64, [3, 3], scope="conv4_3x3")
+      net = slim.conv2d(image_input, 32, [3, 3], scope="conv4_3x3")
       return net
