@@ -25,6 +25,10 @@ def test_multiple_files():
                             batch_size=1)
   trainer.train(1)
 
+def test_mulitple_training_steps():
+  trainer = Trainer.Trainer([kang_day_1], batch_size=1)
+  trainer.train(5)
+
 def test_restoring(tmpdir):
   # TODO(Chase): Test this
   pass
