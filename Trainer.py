@@ -83,5 +83,5 @@ class Trainer():
         self.save_dest,
         number_of_steps=training_steps,
         init_op=init_op,
-        save_summaries_secs=300,
-        save_interval_secs=600)
+        save_summaries_secs=10,
+        save_interval_secs=10)
