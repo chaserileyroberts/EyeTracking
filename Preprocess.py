@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 def image_preprocess(image):
-  """Takes in a uint9 Tensor and transforms it to a (-1, 1) float Tensor.
+  """Takes in a uint8 Tensor and transforms it to a (-1, 1) float Tensor.
   Args:
     image: Tensor uint8 array.
   Returns:
