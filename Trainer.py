@@ -58,9 +58,12 @@ class Trainer():
     self.left_eye_tensor.set_shape((None, 36, 60, 3))
     self.right_eye_tensor.set_shape((None, 36, 60, 3))
     self.gaze.set_shape((None, 2))
-    tf.summary.image("face", self.face_tensor)
-    tf.summary.image("left", self.left_eye_tensor)
-    tf.summary.image("right", self.right_eye_tensor)
+    tf.summary.image(
+        "face", tf.cast((self.face_tensor + 1) * 127.5, tf.uint8))
+    tf.summary.image(
+        "left", tf.cast((self.left_eye_tensor + 1) * 127.5, tf.uint8))
+    tf.summary.image(
+        "right", tf.cast((self.right_eye_tensor + 1) * 127.5, tf.uint8))
     self.save_dest = save_dest
     self.model = EyeConvnet.EyeConvnet(
         True,
