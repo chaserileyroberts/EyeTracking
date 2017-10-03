@@ -62,7 +62,7 @@ class Trainer():
     self.gaze,
     self.pts) = self.iterator.get_next()
     tf.summary.histogram("gaze", self.gaze)
-    self.gaze_normal = self.gaze / (2900, 1600) # Dimensions of the monitor.
+    self.gaze_normal = (self.gaze / (1500, 800)) - 1  # Dimensions of the monitor.
     self.face_tensor.set_shape((None, 128, 128, 3))
     self.left_eye_tensor.set_shape((None, 36, 60, 3))
     self.right_eye_tensor.set_shape((None, 36, 60, 3))
@@ -82,8 +82,8 @@ class Trainer():
         self.right_eye_tensor,
         self.pts)
     self.opt = tf.train.AdamOptimizer(0.0001)
-    self.loss = tf.losses.mean_squared_error(self.gaze_normal, self.model.prediction / (2900, 1600))
-    self.pixels_off = tf.losses.mean_squared_error(self.gaze, self.model.prediction)
+    self.loss = tf.losses.mean_squared_error(self.gaze_normal, self.model.prediction)
+    self.pixels_off = tf.losses.mean_squared_error(self.gaze, (self.model.prediction + 1) * (1500, 800))
     tf.summary.scalar("loss", self.loss)
     tf.summary.scalar("pixel_difference", self.pixels_off ** .5)
 
@@ -99,7 +99,7 @@ class Trainer():
     # TODO(Chase): Include validation testing during training.
     if restore is not None:
       raise NotImplementedError("Restore is not implemented")
-    train_op = slim.learning.create_train_op(self.pixels_off, self.opt)
+    train_op = slim.learning.create_train_op(self.loss, self.opt)
     init_op = tf.group(self.iterator.initializer, 
                        tf.global_variables_initializer())
     slim.learning.train(
