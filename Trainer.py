@@ -62,7 +62,7 @@ class Trainer():
     self.gaze,
     self.pts) = self.iterator.get_next()
     tf.summary.histogram("gaze", self.gaze)
-    self.gaze = self.gaze / (2900, 1600) # Dimensions of the monitor.
+    self.gaze_normal = self.gaze / (2900, 1600) # Dimensions of the monitor.
     self.face_tensor.set_shape((None, 128, 128, 3))
     self.left_eye_tensor.set_shape((None, 36, 60, 3))
     self.right_eye_tensor.set_shape((None, 36, 60, 3))
@@ -82,11 +82,10 @@ class Trainer():
         self.right_eye_tensor,
         self.pts)
     self.opt = tf.train.AdamOptimizer()
-    self.loss = tf.losses.mean_squared_error(self.gaze, self.model.prediction)
-    self.pixels_off = tf.losses.mean_squared_error(
-      self.gaze * (2900, 1600), self.model.prediction * (2900, 1600)) ** .5
+    self.loss = tf.losses.mean_squared_error(self.gaze_normal, self.model.prediction / (2900, 1600))
+    self.pixels_off = tf.losses.mean_squared_error(self.gaze, self.model.prediction)
     tf.summary.scalar("loss", self.loss)
-    tf.summary.scalar("pixel_difference", self.pixels_off)
+    tf.summary.scalar("pixel_difference", self.pixels_off ** .5)
 
   def train(self, training_steps=100000, restore=None):
     """Trains the EyeConvnet Model.
