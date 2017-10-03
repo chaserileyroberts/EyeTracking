@@ -100,7 +100,7 @@ class Trainer():
     # TODO(Chase): Include validation testing during training.
     if restore is not None:
       raise NotImplementedError("Restore is not implemented")
-    train_op = slim.learning.create_train_op(self.loss, self.opt)
+    train_op = slim.learning.create_train_op(self.pixels_off, self.opt)
     init_op = tf.group(self.iterator.initializer, 
                        tf.global_variables_initializer())
     slim.learning.train(
