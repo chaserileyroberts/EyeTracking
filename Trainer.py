@@ -12,7 +12,6 @@ slim = tf.contrib.slim
 
 
 def image_correction(tensor):
-  rgb = tf.cast((tensor + 1) * 127.5, tf.uint8)
   red, green, blue = tf.split(rgb, 3, 3)
   bgr = tf.concat([blue, green, red], 3)
   return bgr
