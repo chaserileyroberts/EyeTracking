@@ -12,7 +12,7 @@ slim = tf.contrib.slim
 
 
 def image_correction(tensor):
-  red, green, blue = tf.split(rgb, 3, 3)
+  red, green, blue = tf.split(tensor, 3, 3)
   bgr = tf.concat([blue, green, red], 3)
   return bgr
 
