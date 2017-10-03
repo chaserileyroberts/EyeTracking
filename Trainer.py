@@ -27,7 +27,7 @@ def read_mat_files(file_name):
 
 class Trainer():
   """Trains and evalualuates the EyeConvnet model"""
-  def __init__(self, mat_files, batch_size=64, save_dest=None, 
+  def __init__(self, mat_files, batch_size=32, save_dest=None, 
               eval_loop=False):
     """Trainer object.
     Args:
