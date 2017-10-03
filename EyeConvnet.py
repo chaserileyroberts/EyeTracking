@@ -45,7 +45,7 @@ class EyeConvnet():
                         normalizer_fn=slim.batch_norm,
                         normalizer_params={'is_training': self.is_training}):
       with slim.arg_scope([slim.dropout],
-                          keep_prob=0.5,
+                          keep_prob=1.0,
                           is_training=self.is_training):
         left_fc = slim.dropout(
             slim.fully_connected(left_flat, 64, scope='left_fc'))
@@ -56,12 +56,12 @@ class EyeConvnet():
         eye_concat = tf.concat([left_fc, right_fc], 1)
         eye_fc = slim.dropout(
             slim.fully_connected(eye_concat, 128, scope='eye_fc'))
+        # Emperical estimation of normalization
         face_pts_tensor = (face_pts_tensor - 300) / 60
         face_pts_fc1 = slim.dropout(
             slim.fully_connected(face_pts_tensor, 128, scope='face_pts_fc1'))
-        # Emperical estimation of normalization
         face_pts_fc2 = slim.dropout(
-            slim.fully_connected(face_pts_fc1, 64, scope='face_pts_fc2'))
+            slim.fully_connected(face_pts_fc1, 128, scope='face_pts_fc2'))
         all_fc1 = tf.concat([face_fc, eye_fc, face_pts_fc2], 1)
         all_fc2 = slim.dropout(
             slim.fully_connected(all_fc1, 128, scope='all_fc2'))
