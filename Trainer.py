@@ -10,6 +10,13 @@ import Preprocess
 
 slim = tf.contrib.slim
 
+
+def image_correction(tensor):
+  rgb = tf.cast((tensor + 1) * 127.5, tf.uint8)
+  red, green, blue = tf.split(rgb, 3, 3)
+  bgr = tf.concat([blue, green, red], 3)
+  return bgr
+
 def read_mat_files(file_name):
   file_name = file_name.decode('utf-8')
   data = loadmat(file_name)
@@ -59,11 +66,11 @@ class Trainer():
     self.right_eye_tensor.set_shape((None, 36, 60, 3))
     self.gaze.set_shape((None, 2))
     tf.summary.image(
-        "face", tf.cast((self.face_tensor + 1) * 127.5, tf.uint8))
+        "face", image_correction(self.face_tensor))
     tf.summary.image(
-        "left", tf.cast((self.left_eye_tensor + 1) * 127.5, tf.uint8))
+        "left", image_correction(self.left_eye_tensor))
     tf.summary.image(
-        "right", tf.cast((self.right_eye_tensor + 1) * 127.5, tf.uint8))
+        "right", image_correction(self.right_eye_tensor))
     self.save_dest = save_dest
     self.model = EyeConvnet.EyeConvnet(
         True,
