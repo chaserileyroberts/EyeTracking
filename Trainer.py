@@ -81,7 +81,7 @@ class Trainer():
         self.left_eye_tensor,
         self.right_eye_tensor,
         self.pts)
-    self.opt = tf.train.AdamOptimizer(0.0001)
+    self.opt = tf.train.AdamOptimizer()
     self.loss = tf.losses.mean_squared_error(self.gaze_normal, self.model.prediction)
     self.pixels_off = tf.losses.mean_squared_error(self.gaze, (self.model.prediction + 1) * (1500, 800))
     tf.summary.scalar("loss", self.loss)
