@@ -22,11 +22,12 @@ def read_mat_files(file_name):
   return (data['face'], 
           data['eye_left'],
           data['eye_right'], 
-          data['gaze'].astype(np.float32))
+          data['gaze'].astype(np.float32),
+          data['pts'].astype(np.float32))
 
 class Trainer():
   """Trains and evalualuates the EyeConvnet model"""
-  def __init__(self, mat_files, batch_size=32, save_dest=None, 
+  def __init__(self, mat_files, batch_size=64, save_dest=None, 
               eval_loop=False):
     """Trainer object.
     Args:
@@ -45,8 +46,8 @@ class Trainer():
         tf.contrib.data.Dataset.from_tensor_slices(
             tuple(tf.py_func(
                 read_mat_files, [file_name], 
-                # Face,    Left,     Right,     Gaze
-                [tf.uint8, tf.uint8, tf.uint8, tf.float32]))))
+                # Face,    Left,     Right,     Gaze        Pts
+                [tf.uint8, tf.uint8, tf.uint8, tf.float32, tf.float32]))))
     # TODO(Chase): Read in multiple files.
     dataset = dataset.map(Preprocess.gaze_images_preprocess)
     if not eval_loop:
@@ -58,12 +59,15 @@ class Trainer():
     (self.face_tensor, 
     self.left_eye_tensor, 
     self.right_eye_tensor,
-    self.gaze) = self.iterator.get_next()
+    self.gaze,
+    self.pts) = self.iterator.get_next()
+    tf.summary.histogram("gaze", self.gaze)
     self.gaze = self.gaze / (2900, 1600) # Dimensions of the monitor.
     self.face_tensor.set_shape((None, 128, 128, 3))
     self.left_eye_tensor.set_shape((None, 36, 60, 3))
     self.right_eye_tensor.set_shape((None, 36, 60, 3))
     self.gaze.set_shape((None, 2))
+    self.pts.set_shape((None, 102))
     tf.summary.image(
         "face", image_correction(self.face_tensor))
     tf.summary.image(
@@ -75,7 +79,8 @@ class Trainer():
         True,
         self.face_tensor,
         self.left_eye_tensor,
-        self.right_eye_tensor)
+        self.right_eye_tensor,
+        self.pts)
     self.opt = tf.train.AdamOptimizer()
     self.loss = tf.losses.mean_squared_error(self.gaze, self.model.prediction)
     self.pixels_off = tf.losses.mean_squared_error(

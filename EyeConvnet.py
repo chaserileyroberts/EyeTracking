@@ -5,13 +5,15 @@ slim = tf.contrib.slim
 
 class EyeConvnet():
   def __init__(self, is_training, face_tensor, 
-      left_eye_tensor, right_eye_tensor):
+      left_eye_tensor, right_eye_tensor, face_pts_tensor):
     """Eye Tracking Convolutional Network implementation.
     Args:
       is_training: Boolean. Whether network is currently training.
       face_tensor: 4D Tensor. Photo of the cropped face.
       left_eye_tensor: 4D Tensor. Photo of cropped left eye.
       right_eye_tensor: 4D Tensor. Photo of cropped right eye.
+      face_pts_tensor: 2D Tensor. Represents the points on the face 
+          relative to the camera.
     Attributes:
       self.face_tensor: The 4D tensor of the face. Same as passed in.
       self.left_eye_tensor: The 4D tensor of the left eye. Same as passed in.
@@ -54,7 +56,13 @@ class EyeConvnet():
         eye_concat = tf.concat([left_fc, right_fc], 1)
         eye_fc = slim.dropout(
             slim.fully_connected(eye_concat, 128, scope='eye_fc'))
-        all_fc1 = tf.concat([face_fc, eye_fc], 1)
+        face_pts_tensor = (face_pts_tensor - 300) / 60
+        face_pts_fc1 = slim.dropout(
+            slim.fully_connected(face_pts_tensor, 128, scope='face_pts_fc1'))
+        # Emperical estimation of normalization
+        face_pts_fc2 = slim.dropout(
+            slim.fully_connected(face_pts_fc1, 64, scope='face_pts_fc2'))
+        all_fc1 = tf.concat([face_fc, eye_fc, face_pts_fc2], 1)
         all_fc2 = slim.dropout(
             slim.fully_connected(all_fc1, 128, scope='all_fc2'))
         # No activation fn for prediction (as prediction can have negative vals).

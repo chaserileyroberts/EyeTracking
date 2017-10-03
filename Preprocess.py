@@ -9,20 +9,23 @@ def image_preprocess(image):
   """
   return (tf.to_float(image)/ 127.5) - 1.0
 
-def gaze_images_preprocess(face, left, right, gaze):
+def gaze_images_preprocess(face, left, right, gaze, pts):
   """Preprocesses all of the gaze images.
   Args:
-    face: Face numpy array.
-    left: Left eye numpy array.
-    right: Right eye numpy array.
-    gaze: Gaze direction numpy array.
+    face: Face tensor.
+    left: Left eye tensor.
+    right: Right eye tensor.
+    gaze: Gaze direction tensor.
+    pts: Face pts tensor.
   Returns:
     face: Preprocessed face image.
     left: Preprocessed left image.
     right: Preprocessed right image.
     gaze: Unchange gaze.
+    pts: Unchanged pts.
   """
   return (image_preprocess(face),
           image_preprocess(left),
           image_preprocess(right),
-          gaze)
+          gaze,
+          pts)
