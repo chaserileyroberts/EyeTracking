@@ -78,7 +78,10 @@ class Trainer():
         self.right_eye_tensor)
     self.opt = tf.train.AdamOptimizer()
     self.loss = tf.losses.mean_squared_error(self.gaze, self.model.prediction)
+    self.pixels_off = tf.losses.mean_squared_error(
+      self.gaze * (2900, 1600), self.model.prediction * (2900, 1600)) ** .5
     tf.summary.scalar("loss", self.loss)
+    tf.summary.scalar("pixel_difference", self.pixels_off)
 
   def train(self, training_steps=100000, restore=None):
     """Trains the EyeConvnet Model.
