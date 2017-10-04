@@ -100,6 +100,7 @@ class EyeConvnet():
         net = slim.conv2d(image_input, 64, [5, 5], scope="conv2_5x5")
         net = slim.max_pool2d(net, [2, 2], scope='pool1')
         net = slim.conv2d(image_input, 64, [3, 3], scope="conv3_3x3")
+        net = slim.max_pool2d(net, [2, 2], scope='pool2')
         net = slim.conv2d(image_input, 32, [1, 1], scope="conv4_3x3")
         net = slim.max_pool2d(net, [2, 2], scope='pool2')
         return net
