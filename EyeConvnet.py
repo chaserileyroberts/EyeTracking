@@ -41,9 +41,7 @@ class EyeConvnet():
     face_flat = slim.flatten(face_conv)
     # Now start doing the fully connected layers.
     with slim.arg_scope([slim.fully_connected],
-                        weights_regularizer=slim.l2_regularizer(0.001),
-                        normalizer_fn=slim.batch_norm,
-                        normalizer_params={'is_training': self.is_training}):
+                        weights_regularizer=slim.l2_regularizer(0.001)):
       with slim.arg_scope([slim.dropout],
                           keep_prob=1.0,
                           is_training=self.is_training):
