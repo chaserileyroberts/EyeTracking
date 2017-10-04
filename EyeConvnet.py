@@ -57,7 +57,7 @@ class EyeConvnet():
         eye_fc = slim.dropout(
             slim.fully_connected(eye_concat, 128, scope='eye_fc'))
         # Emperical estimation of normalization
-        face_pts_tensor = (face_pts_tensor - 300) / 60
+        face_pts_tensor = face_pts_tensor - 300
         face_pts_fc1 = slim.dropout(
             slim.fully_connected(face_pts_tensor, 128, scope='face_pts_fc1'))
         face_pts_fc2 = slim.dropout(
@@ -76,8 +76,9 @@ class EyeConvnet():
                           normalizer_fn=slim.batch_norm,
                           normalizer_params={'is_training': self.is_training}):
         net = slim.conv2d(image_input, 32, [11, 11], scope="conv1_11x11")
+        net = slim.max_pool2d(net, [4, 4], scope='pool1')
         net = slim.conv2d(image_input, 64, [5, 5], scope="conv2_5x5")
-        net = slim.max_pool2d(net, [2, 2], scope='pool1')
+        net = slim.max_pool2d(net, [4, 4], scope='pool1')
         net = slim.conv2d(image_input, 64, [5, 5], scope="conv3_5x5")
         net = slim.conv2d(image_input, 128, [3, 3], scope="conv4_3x3")
         net = slim.max_pool2d(net, [2, 2], scope='pool2')
@@ -99,7 +100,8 @@ class EyeConvnet():
                           normalizer_params={'is_training': self.is_training}):
         net = slim.conv2d(image_input, 64, [5, 5], scope="conv1_5x5")
         net = slim.conv2d(image_input, 64, [5, 5], scope="conv2_5x5")
-        net = slim.max_pool2d(net, [2, 2], scope='pool')
+        net = slim.max_pool2d(net, [2, 2], scope='pool1')
         net = slim.conv2d(image_input, 64, [3, 3], scope="conv3_3x3")
         net = slim.conv2d(image_input, 32, [1, 1], scope="conv4_3x3")
+        net = slim.max_pool2d(net, [2, 2], scope='pool2')
         return net
