@@ -29,7 +29,7 @@ class EyeConvnet():
     # We make a template so that the left and right branches can
     # share weights. 
     eye_branch_template = tf.make_template("eye_branch", 
-                                           self.make_eye_branch_no_pooling)
+                                           self.make_eye_convnet)
     with tf.variable_scope("face_convnet"):
       face_conv = self.make_face_branch(self.face_tensor)
     with tf.variable_scope("left_eye_convnet"):
@@ -89,7 +89,7 @@ class EyeConvnet():
   def make_eye_branch(self, image_input):
     raise NotImplemented("We are experimenting first with no pooling")
 
-  def make_eye_branch_no_pooling(self, image_input):
+  def make_eye_convnet(self, image_input):
     #TODO(Chase): Test the 'is_training' stuff'.
     with tf.variable_scope("eye_convnet"):
       with slim.arg_scope([slim.conv2d], 

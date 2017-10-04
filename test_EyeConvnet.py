@@ -37,6 +37,7 @@ def test_variables_change():
       })
     after = sess.run(tf.trainable_variables())
     for b, a in zip(before, after):
+      # Make sure something changed.
       assert (b != a).any()
 
 def test_needs_inputs():
