@@ -82,8 +82,8 @@ class Trainer():
         self.right_eye_tensor,
         self.pts)
     self.opt = tf.train.AdamOptimizer()
-    self.loss = tf.losses.mean_squared_error(self.gaze_normal, self.model.prediction)
-    self.pixels_off = tf.losses.mean_squared_error(self.gaze, (self.model.prediction + 1) * (1500, 800))
+    self.loss = tf.losses.mean_squared_error(self.gaze, self.model.prediction)
+    self.pixels_off = tf.losses.mean_squared_error(self.gaze, self.model.prediction)
     tf.summary.scalar("loss", self.loss)
     tf.summary.scalar("pixel_difference", self.pixels_off ** .5)
     # Histogram for all of the variables.
