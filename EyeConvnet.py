@@ -97,10 +97,10 @@ class EyeConvnet():
                           normalizer_fn=slim.batch_norm,
                           normalizer_params={'is_training': self.is_training}):
         net = slim.conv2d(image_input, 64, [5, 5], scope="conv1_5x5")
-        net = slim.conv2d(image_input, 64, [5, 5], scope="conv2_5x5")
+        net = slim.conv2d(net, 64, [5, 5], scope="conv2_5x5")
         net = slim.max_pool2d(net, [2, 2], scope='pool1')
-        net = slim.conv2d(image_input, 64, [3, 3], scope="conv3_3x3")
+        net = slim.conv2d(net, 64, [3, 3], scope="conv3_3x3")
         net = slim.max_pool2d(net, [2, 2], scope='pool2')
-        net = slim.conv2d(image_input, 32, [1, 1], scope="conv4_3x3")
+        net = slim.conv2d(net, 32, [1, 1], scope="conv4_3x3")
         net = slim.max_pool2d(net, [2, 2], scope='pool2')
         return net
