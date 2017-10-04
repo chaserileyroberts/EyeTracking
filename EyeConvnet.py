@@ -43,7 +43,7 @@ class EyeConvnet():
     with slim.arg_scope([slim.fully_connected],
                         weights_regularizer=slim.l2_regularizer(0.001)):
       with slim.arg_scope([slim.dropout],
-                          keep_prob=1.0,
+                          keep_prob=0.5,
                           is_training=self.is_training):
         left_fc = slim.dropout(
             slim.fully_connected(left_flat, 64, scope='left_fc'))
