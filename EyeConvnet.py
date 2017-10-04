@@ -70,9 +70,10 @@ class EyeConvnet():
   def make_face_branch(self, image_input):
     with tf.variable_scope("face_convnet"):
       with slim.arg_scope([slim.conv2d], 
-                          weights_regularizer=slim.l2_regularizer(0.001),
-                          normalizer_fn=slim.batch_norm,
-                          normalizer_params={'is_training': self.is_training}):
+                          weights_regularizer=slim.l2_regularizer(0.001)
+                          #normalizer_fn=slim.batch_norm,
+                          #normalizer_params={'is_training': self.is_training}
+                          ):
         net = slim.conv2d(image_input, 32, [11, 11], scope="conv1_11x11")
         net = slim.conv2d(net, 64, [5, 5], scope="conv2_5x5")
         net = slim.max_pool2d(net, [4, 4], stride=4, scope='pool1')
@@ -91,9 +92,10 @@ class EyeConvnet():
     #TODO(Chase): Test the 'is_training' stuff'.
     with tf.variable_scope("eye_convnet"):
       with slim.arg_scope([slim.conv2d], 
-                          weights_regularizer=slim.l2_regularizer(0.001),
-                          normalizer_fn=slim.batch_norm,
-                          normalizer_params={'is_training': self.is_training}):
+                          weights_regularizer=slim.l2_regularizer(0.001)
+                          #normalizer_fn=slim.batch_norm,
+                          #normalizer_params={'is_training': self.is_training}
+                          ):
         net = slim.conv2d(image_input, 64, [5, 5], scope="conv1_5x5")
         net = slim.conv2d(net, 64, [5, 5], scope="conv2_5x5")
         net = slim.max_pool2d(net, [2, 2], scope='pool1')

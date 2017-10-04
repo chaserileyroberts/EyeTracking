@@ -86,7 +86,7 @@ class Trainer():
     self.pixels_off = tf.losses.mean_squared_error(self.gaze, (self.model.prediction + 1) * (1500, 800))
     tf.summary.scalar("loss", self.loss)
     tf.summary.scalar("pixel_difference", self.pixels_off ** .5)
-    # histogram for all of the variables
+    # Histogram for all of the variables.
     for var in tf.trainable_variables():
       tf.summary.histogram(var.name, var)
 
