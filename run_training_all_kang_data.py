@@ -44,4 +44,7 @@ if __name__ == '__main__':
       batch_size=32, 
       save_dest='/media/roberc4/kang/models/',
       eval_loop=args.evaluate)
-  trainer.train()
+  if args.evaluate:
+    trainer.evaluate()
+  else:
+    trainer.train()

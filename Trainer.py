@@ -112,7 +112,7 @@ class Trainer():
         init_op=init_op,
         save_summaries_secs=10)
 
-  def evaluate(self, num_evals=500, eval_secs=600, timeout=None):
+  def evaluate(self, num_evals=500, eval_secs=60, timeout=None):
     """ Runs the eval loop
     Args:
       num_evals: How many times to do the eval loop.
