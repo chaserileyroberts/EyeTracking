@@ -40,8 +40,9 @@ class EyeConvnet():
     right_flat = slim.flatten(right_eye_conv)
     face_flat = slim.flatten(face_conv)
     # Now start doing the fully connected layers.
-    with slim.arg_scope([slim.fully_connected],
-                        weights_regularizer=slim.l2_regularizer(0.001)):
+    with slim.arg_scope([slim.fully_connected]
+                        # weights_regularizer=slim.l2_regularizer(0.001)
+                        ):
       with slim.arg_scope([slim.dropout],
                           keep_prob=0.5,
                           is_training=self.is_training):
@@ -69,8 +70,8 @@ class EyeConvnet():
       
   def make_face_branch(self, image_input):
     with tf.variable_scope("face_convnet"):
-      with slim.arg_scope([slim.conv2d], 
-                          weights_regularizer=slim.l2_regularizer(0.001)
+      with slim.arg_scope([slim.conv2d]
+                          #weights_regularizer=slim.l2_regularizer(0.001)
                           #normalizer_fn=slim.batch_norm,
                           #normalizer_params={'is_training': self.is_training}
                           ):
@@ -91,8 +92,8 @@ class EyeConvnet():
   def make_eye_convnet(self, image_input):
     #TODO(Chase): Test the 'is_training' stuff'.
     with tf.variable_scope("eye_convnet"):
-      with slim.arg_scope([slim.conv2d], 
-                          weights_regularizer=slim.l2_regularizer(0.001)
+      with slim.arg_scope([slim.conv2d]
+                          #weights_regularizer=slim.l2_regularizer(0.001)
                           #normalizer_fn=slim.batch_norm,
                           #normalizer_params={'is_training': self.is_training}
                           ):
