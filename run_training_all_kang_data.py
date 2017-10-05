@@ -31,11 +31,9 @@ kang_right_files = [
   ]
 
 all_kang_data = kang_center_files + kang_left_files + kang_right_files
-kang_small = kang_center_files[:2]
 
 if __name__ == '__main__':
-  sess = tf.Session()
-  path = "./"
-  kang_small = [path + x for x in kang_small]
-  trainer = Trainer.Trainer(sess, kang_small, batch_size=1, save_dest="./models")
-  trainer.train(10)
+  path = "/media/roberc4/kang/final_dataset/"
+  data_paths = [path + x for x in all_kang_data]
+  trainer = Trainer.Trainer(data_paths, batch_size=32, save_dest='/media/roberc4/kang/models/')
+  trainer.train()
