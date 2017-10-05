@@ -76,7 +76,7 @@ class Trainer():
         "right", image_correction(self.right_eye_tensor))
     self.save_dest = save_dest
     self.model = EyeConvnet.EyeConvnet(
-        True,
+        not eval_loop,
         self.face_tensor,
         self.left_eye_tensor,
         self.right_eye_tensor,
@@ -130,6 +130,6 @@ class Trainer():
       self.save_dest,
       num_evals=num_evals,
       eval_interval_secs=eval_secs,
-      eval_op=names_to_updates.values(),
+      eval_op=list(names_to_updates.values()),
       summary_op=tf.summary.merge_all(),
       timeout=timeout)
