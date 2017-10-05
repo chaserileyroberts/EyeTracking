@@ -112,14 +112,24 @@ class Trainer():
         init_op=init_op,
         save_summaries_secs=10)
 
-  def eval(self, eval_secs):
+  def evaluate(self, num_evals=500, eval_secs=600, timeout=None):
     """ Runs the eval loop
     Args:
+      num_evals: How many times to do the eval loop.
       eval_secs: How often to run the eval loop.
+      timeout: Default to None, only used for unit testing.
 
     """
+    names_to_values, names_to_updates = slim.metrics.aggregate_metric_map({
+        "mse": slim.metrics.streaming_root_mean_squared_error(
+            self.model.prediction, self.gaze) # Get approximate error
+    })
     slim.evaluation.evaluation_loop(
-    'local',
-    self.save_dest,
-    self.save_dest,
-    eval_interval_secs=eval_secs)
+      '',
+      self.save_dest,
+      self.save_dest,
+      num_evals=num_evals,
+      eval_interval_secs=eval_secs,
+      eval_op=names_to_updates.values(),
+      summary_op=tf.summary.merge_all(),
+      timeout=timeout)
