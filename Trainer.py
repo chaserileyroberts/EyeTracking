@@ -89,6 +89,9 @@ class Trainer():
     # Histogram for all of the variables.
     for var in tf.trainable_variables():
       tf.summary.histogram(var.name, var)
+    self.train_op = slim.learning.create_train_op(self.loss, self.opt)
+    self.init_op = tf.group(self.iterator.initializer, 
+                            tf.global_variables_initializer())
 
   def train(self, training_steps=100000, restore=None):
     """Trains the EyeConvnet Model.
@@ -102,14 +105,11 @@ class Trainer():
     # TODO(Chase): Include validation testing during training.
     if restore is not None:
       raise NotImplementedError("Restore is not implemented")
-    train_op = slim.learning.create_train_op(self.loss, self.opt)
-    init_op = tf.group(self.iterator.initializer, 
-                       tf.global_variables_initializer())
     slim.learning.train(
-        train_op,
+        self.train_op,
         self.save_dest,
         number_of_steps=training_steps,
-        init_op=init_op,
+        init_op=self.init_op,
         save_summaries_secs=10)
 
   def evaluate(self, num_evals=500, eval_secs=60, timeout=None):
@@ -124,11 +124,13 @@ class Trainer():
         "mse": slim.metrics.streaming_root_mean_squared_error(
             self.model.prediction, self.gaze) # Get approximate error
     })
+
     slim.evaluation.evaluation_loop(
       '',
       self.save_dest,
       self.save_dest,
       num_evals=num_evals,
+      initial_op=self.init_op,
       eval_interval_secs=eval_secs,
       eval_op=list(names_to_updates.values()),
       summary_op=tf.summary.merge_all(),
