@@ -55,7 +55,9 @@ class Trainer():
     dataset = dataset.batch(batch_size)
     if not eval_loop:
       dataset = dataset.repeat()
-    self.iterator = dataset.make_initializable_iterator()
+      self.iterator = dataset.make_initializable_iterator()
+    else:
+      self.iterator = dataset.make_one_shot_iterator()
     (self.face_tensor, 
     self.left_eye_tensor, 
     self.right_eye_tensor,
@@ -90,8 +92,6 @@ class Trainer():
     for var in tf.trainable_variables():
       tf.summary.histogram(var.name, var)
     self.train_op = slim.learning.create_train_op(self.loss, self.opt)
-    self.init_op = tf.group(self.iterator.initializer, 
-                            tf.global_variables_initializer())
 
   def train(self, training_steps=100000, restore=None):
     """Trains the EyeConvnet Model.
@@ -105,6 +105,8 @@ class Trainer():
     # TODO(Chase): Include validation testing during training.
     if restore is not None:
       raise NotImplementedError("Restore is not implemented")
+    self.init_op = tf.group(self.iterator.initializer, 
+                            tf.global_variables_initializer())
     slim.learning.train(
         self.train_op,
         self.save_dest,
@@ -112,7 +114,7 @@ class Trainer():
         init_op=self.init_op,
         save_summaries_secs=10)
 
-  def evaluate(self, num_evals=500, eval_secs=60, timeout=None):
+  def evaluate(self, num_evals=50, eval_secs=60, timeout=None):
     """ Runs the eval loop
     Args:
       num_evals: How many times to do the eval loop.
@@ -124,14 +126,19 @@ class Trainer():
         "mse": slim.metrics.streaming_root_mean_squared_error(
             self.model.prediction, self.gaze) # Get approximate error
     })
-
+    summary_ops = []
+    for metric_name, metric_value in names_to_values.items():
+      print(metric_name)
+      op = tf.summary.scalar(metric_name, metric_value)
+      op = tf.Print(op, [metric_value], metric_name)
+    summary_ops.append(op)
     slim.evaluation.evaluation_loop(
       '',
       self.save_dest,
       self.save_dest,
       num_evals=num_evals,
-      initial_op=self.init_op,
       eval_interval_secs=eval_secs,
       eval_op=list(names_to_updates.values()),
       summary_op=tf.summary.merge_all(),
       timeout=timeout)
+    print("We gucci")
