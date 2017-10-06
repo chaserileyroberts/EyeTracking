@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 
 def rodrigues(r):
     def S(n):
-        Sn = np.array([[0,-n[2],n[1]],[n[2],0,-n[0]],[-n[1],n[0],0]])
+        Sn = np.array([[0, -n[2], n[1]], [n[2], 0, -n[0]], [-n[1], n[0], 0]])
         return Sn
     theta = scipy.linalg.norm(r)
     if theta > 1e-30:
@@ -89,7 +89,7 @@ def crop_eye(img, rc, lc, aspect_ratio=(5, 3), pad_ratio=(4, 1)):
         cropped eye image or None(exceed boundary)
     """
     ec = (rc + lc) / 2.
-    ec_width = abs(rc[0]- lc[0])
+    ec_width = abs(rc[0] - lc[0])
     pad_width = ec_width/pad_ratio[0]*pad_ratio[1]
     eye_width = np.round(ec_width + 2*pad_width)
     eye_width = eye_width + (4 - eye_width % 4) # multiple of 4
@@ -97,7 +97,7 @@ def crop_eye(img, rc, lc, aspect_ratio=(5, 3), pad_ratio=(4, 1)):
     origin = np.array([ec[0] - eye_width/2., ec[1] - eye_height/2.]).round().astype(int)
     eye_width = eye_width.astype(int)
     eye_height = eye_height.astype(int)
-    #print(origin)
+    # print(origin)
     if origin[0] >= 0 and origin[1] >= 0 and \
        origin[0]+eye_width < img.shape[1] and \
        origin[1]+eye_height < img.shape[0]:   
@@ -136,7 +136,7 @@ def crop_eye_warp(img, rc, lc, anchor=np.array([(300, 240), (340, 240)]),
     """
     
     assert rc[0] < lc[0]
-    matR, matT = compute_RT(rc, lc, anchor[0, :], anchor[1, :])
+    matR, matT = compute_RT(rc, lc, anchor[0,:], anchor[1,:])
     
     M = np.concatenate((matR, matT), 1)
     dst = cv2.warpAffine(img, M, dsize=img.shape[:2]) 
@@ -169,11 +169,11 @@ def crop_face(img, pts, pad_ratio=(10, 1)):
 
     if origin[0] >= 0 and origin[1] >= 0 and \
        origin[0] + size < img.shape[1] and \
-       origin[1] + size< img.shape[0]:   
+       origin[1] + size < img.shape[0]:   
         return img[origin[1]:origin[1]+size, origin[0]:origin[0]+size], origin
     else:
         return None, None
-def crop_face_warp(img, pts, anchor=np.array([(290, 200),(350, 200),(320, 270)]), 
+def crop_face_warp(img, pts, anchor=np.array([(290, 200), (350, 200), (320, 270)]), 
                              pad_ratio=(10, 1)):
     """
     Crop face image given 51 facial landmarks, warp face images give 3 anchor
@@ -190,9 +190,9 @@ def crop_face_warp(img, pts, anchor=np.array([(290, 200),(350, 200),(320, 270)])
     import cv2
     if np.sum(pts) == 0:
         return None, None
-    eye_right = np.mean(pts[19:25, :], 0)
-    eye_left = np.mean(pts[25:31, :], 0)
-    mouth = np.mean(pts[32:51, :], 0)
+    eye_right = np.mean(pts[19:25,:], 0)
+    eye_left = np.mean(pts[25:31,:], 0)
+    mouth = np.mean(pts[32:51,:], 0)
     X = np.array([eye_right, eye_left, mouth])
     X = np.concatenate((X, np.ones((3, 1))), 1)
     mapMatrix = np.linalg.lstsq(X, anchor)[0]
@@ -246,12 +246,12 @@ class Draw():
         pupil = np.zeros((0, 2))
         for idx in range(n_image):
             row, col = ind2sub((n_grid, n_grid), idx)
-            canvas[row*n_dim[0]:(row+1)*n_dim[0], col*n_dim[1]:(col+1)*n_dim[1]] = eye[idx, :].reshape(n_dim)
-            shape = pts[idx, :].reshape((-1, 2))
+            canvas[row*n_dim[0]:(row+1)*n_dim[0], col*n_dim[1]:(col+1)*n_dim[1]] = eye[idx,:].reshape(n_dim)
+            shape = pts[idx,:].reshape((-1, 2))
             shape = shape + np.array([col*n_dim[1], row*n_dim[0]]).reshape((1, -1))
-            eyelid = np.concatenate((eyelid, shape[:10, :]))
-            iris = np.concatenate((iris, shape[10:-1, :]))
-            pupil = np.concatenate((pupil, shape[-1, :][None, :]))
+            eyelid = np.concatenate((eyelid, shape[:10,:]))
+            iris = np.concatenate((iris, shape[10:-1,:]))
+            pupil = np.concatenate((pupil, shape[-1,:][None,:]))
         print(canvas.shape)   
         plt.imshow(canvas, cmap='gray')
         plt.plot(eyelid[:, 0], eyelid[:, 1], 'b.', markersize=12) 
