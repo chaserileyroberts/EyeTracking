@@ -39,12 +39,13 @@ all_kang_data = kang_center_files + kang_left_files + kang_right_files
 if __name__ == '__main__':
   path = "/media/roberc4/kang/final_dataset/"
   data_paths = [path + x for x in all_kang_data]
+  batch_size = 32
   trainer = Trainer.Trainer(
       data_paths, 
-      batch_size=32, 
+      batch_size=batch_size, 
       save_dest='/media/roberc4/kang/models/',
       eval_loop=args.evaluate)
   if args.evaluate:
-    trainer.evaluate()
+    trainer.evaluate(num_evals=100)
   else:
     trainer.train()
