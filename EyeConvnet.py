@@ -57,7 +57,7 @@ class EyeConvnet():
         eye_fc = slim.dropout(
             slim.fully_connected(eye_concat, 128, scope='eye_fc'))
         # Emperical estimation of normalization
-        face_pts_tensor = face_pts_tensor - 300
+        face_pts_tensor = (face_pts_tensor - 300) / 60
         face_pts_fc1 = slim.dropout(
             slim.fully_connected(face_pts_tensor, 128, scope='face_pts_fc1'))
         face_pts_fc2 = slim.dropout(

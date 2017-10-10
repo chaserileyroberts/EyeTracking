@@ -72,11 +72,11 @@ class Trainer():
       self.pts)
     self.opt = tf.train.AdamOptimizer()
     self.loss = tf.losses.mean_squared_error(
-      self.gaze, self.model.prediction)
-    self.pixels_off = tf.losses.mean_squared_error(
-      self.gaze, self.model.prediction)
+      self.gaze_normal, self.model.prediction)
+    self.pixels_off = tf.metrics.mean_absolute_error(
+      self.gaze, (self.model.prediction + 1) * (1500, 1800))
     tf.summary.scalar("loss", self.loss)
-    tf.summary.scalar("pixel_difference", (self.pixels_off * 2) ** .5)
+    tf.summary.scalar("pixel_difference", self.pixels_off)
     # Histogram for all of the variables.
     for var in tf.trainable_variables():
       tf.summary.histogram(var.name, var)
