@@ -73,8 +73,8 @@ class Trainer():
     self.opt = tf.train.AdamOptimizer()
     self.loss = tf.losses.mean_squared_error(
       self.gaze_normal, self.model.prediction)
-    self.pixels_off = tf.metrics.mean_absolute_error(
-      self.gaze, (self.model.prediction + 1) * (1500, 1800))
+    self.pixels_off, _ = tf.metrics.mean_absolute_error(
+      self.gaze, (self.model.prediction + 1) * (1500, 800))
     tf.summary.scalar("loss", self.loss)
     tf.summary.scalar("pixel_difference", self.pixels_off)
     # Histogram for all of the variables.
@@ -136,4 +136,3 @@ class Trainer():
       eval_op=list(names_to_updates.values()),
       summary_op=tf.summary.merge_all(),
       timeout=timeout)
-    print("We gucci")

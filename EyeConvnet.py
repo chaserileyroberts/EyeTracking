@@ -78,6 +78,8 @@ class EyeConvnet():
                 # normalizer_params={'is_training':
                 # self.is_training}
                 ):
+        # Try to normalize the input before convoluting
+        image_input = slim.batch_norm(image_input, is_training=self.is_training)
         net = slim.conv2d(image_input, 32, [11, 11], scope="conv1_11x11")
         net = slim.conv2d(net, 64, [5, 5], scope="conv2_5x5")
         net = slim.max_pool2d(net, [4, 4], stride=4, scope='pool1')
@@ -89,9 +91,6 @@ class EyeConvnet():
         net = slim.conv2d(net, 32, [1, 1], scope="conv6_1x1")
         return net
 
-  def make_eye_branch(self, image_input):
-    raise NotImplemented("We are experimenting first with no pooling")
-
   def make_eye_convnet(self, image_input):
     # TODO(Chase): Test the 'is_training' stuff'.
     with tf.variable_scope("eye_convnet"):
@@ -101,6 +100,8 @@ class EyeConvnet():
                 # normalizer_params={'is_training':
                 # self.is_training}
                 ):
+        # Try to normalize the input before convoluting
+        image_input = slim.batch_norm(image_input, is_training=self.is_training)
         net = slim.conv2d(image_input, 64, [5, 5], scope="conv1_5x5")
         net = slim.conv2d(net, 64, [5, 5], scope="conv2_5x5")
         net = slim.max_pool2d(net, [2, 2], scope='pool1')

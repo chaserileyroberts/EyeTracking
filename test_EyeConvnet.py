@@ -41,7 +41,7 @@ def test_variables_change():
                      face_pts_tensor: np.ones((1, 102))
                      })
         after = sess.run(tf.trainable_variables())
-        for b, a in zip(before, after):
+        for b, a, n in zip(before, after, [n.name for n in tf.trainable_variables()]):
             # Make sure something changed.
             assert (b != a).any()
 
