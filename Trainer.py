@@ -39,11 +39,11 @@ class Trainer():
     if not eval_loop:
       dataset = dataset.shuffle(buffer_size=100000)
     dataset = dataset.batch(batch_size)
-    if not eval_loop:
-      dataset = dataset.repeat()
-      self.iterator = dataset.make_initializable_iterator()
-    else:
+    dataset = dataset.repeat()
+    if eval_loop:
       self.iterator = dataset.make_one_shot_iterator()
+    else:
+      self.iterator = dataset.make_initializable_iterator()
     (self.face_tensor,
      self.left_eye_tensor,
      self.right_eye_tensor,
