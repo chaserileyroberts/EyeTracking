@@ -24,7 +24,7 @@ def make_fast_dataset(mat_files):
   Returns:  
     dataset: The dataset object
   """
-  filenames = tf.contrib.data.Dataset.from_tensor_slices(mat_files)
+  filenames = tf.contrib.data.Dataset.from_tensor_slices(mat_files).take(1)
   dataset = filenames.flat_map(
       lambda file_name:
       tf.contrib.data.Dataset.from_tensor_slices(
