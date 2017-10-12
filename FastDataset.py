@@ -26,6 +26,7 @@ def make_fast_dataset(mat_files):
   """
   filenames = (tf.contrib.data.Dataset.from_tensor_slices(mat_files)
       .shuffle(buffer_size=10)
+      .take(10)
       .repeat())
   dataset = filenames.flat_map(
       lambda file_name:
