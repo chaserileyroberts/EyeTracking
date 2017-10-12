@@ -37,9 +37,9 @@ class Trainer():
     # TODO(Chase): Read in multiple files.
     dataset = dataset.map(Preprocess.gaze_images_preprocess)
     if not eval_loop:
-      dataset = dataset.shuffle(buffer_size=100000)
+      dataset = dataset.shuffle(buffer_size=1000)
     dataset = dataset.batch(batch_size)
-    dataset = dataset.repeat()
+    # dataset = dataset.repeat()
     if eval_loop:
       self.iterator = dataset.make_one_shot_iterator()
     else:
