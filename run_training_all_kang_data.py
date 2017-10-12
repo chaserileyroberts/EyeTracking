@@ -5,7 +5,7 @@ import argparse
 parser = argparse.ArgumentParser(
     description='Run Eye Tracking Convnet Training.')
 parser.add_argument('-evaluate', '-e', action='store_true', default=False)
-parser.add_argument('-all', '-e', action='store_true', default=False)
+parser.add_argument('-all', '-a', action='store_true', default=False)
 args = parser.parse_args()
 
 test_data = [
