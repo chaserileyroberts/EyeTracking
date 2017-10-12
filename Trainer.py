@@ -39,11 +39,12 @@ class Trainer():
     if not eval_loop:
       dataset = dataset.shuffle(buffer_size=1000)
     dataset = dataset.batch(batch_size)
-    # dataset = dataset.repeat()
+    dataset = dataset.repeat()
     if eval_loop:
       self.iterator = dataset.make_one_shot_iterator()
     else:
-      self.iterator = dataset.make_initializable_iterator()
+      self.iterator = dataset.make_one_shot_iterator()
+      #self.iterator = dataset.make_initializable_iterator()
     (self.face_tensor,
      self.left_eye_tensor,
      self.right_eye_tensor,
@@ -94,7 +95,7 @@ class Trainer():
     # TODO(Chase): Include validation testing during training.
     if restore is not None:
       raise NotImplementedError("Restore is not implemented")
-    self.init_op = tf.group(self.iterator.initializer,
+    self.init_op = tf.group(#self.iterator.initializer,
         tf.global_variables_initializer())
     if self.save_dest is not None:
       saver = tf.train.Saver(
