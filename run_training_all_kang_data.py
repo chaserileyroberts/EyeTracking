@@ -5,6 +5,7 @@ import argparse
 parser = argparse.ArgumentParser(
     description='Run Eye Tracking Convnet Training.')
 parser.add_argument('-evaluate', '-e', action='store_true', default=False)
+parser.add_argument('-all', '-e', action='store_true', default=False)
 args = parser.parse_args()
 
 test_data = [
@@ -39,10 +40,13 @@ all_kang_data = kang_center_files + kang_left_files + kang_right_files
 
 if __name__ == '__main__':
   path = "/media/roberc4/kang/final_dataset/"
-  if not args.evaluate:
-    data_paths = [path + x for x in all_kang_data]
-  else:
+  if args.evaluate:
     data_paths = [path + x for x in test_data]
+  if agrs.all:
+    data_paths = [path + x[:2] for x in open('all_mat_files.txt')]
+  else:
+    data_paths = [path + x for x in all_kang_data]
+
   batch_size = 32
   trainer = Trainer.Trainer(
       data_paths, 
