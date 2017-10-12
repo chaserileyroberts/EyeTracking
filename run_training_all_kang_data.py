@@ -42,7 +42,7 @@ if __name__ == '__main__':
   path = "/media/roberc4/kang/final_dataset/"
   if args.evaluate:
     data_paths = [path + x for x in test_data]
-  if agrs.all:
+  if args.all:
     data_paths = [path + x[:2] for x in open('all_mat_files.txt')]
   else:
     data_paths = [path + x for x in all_kang_data]
