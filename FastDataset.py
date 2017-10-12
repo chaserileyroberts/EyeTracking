@@ -1,6 +1,7 @@
 import tensorflow as tf
 from misc import loadmat
 import numpy as np
+import random
 
 def read_mat_files(file_name):
     file_name = file_name.decode('utf-8')
@@ -15,6 +16,7 @@ def make_fast_dataset(mat_files):
   """Makes the Fast Data Runner
   Args:
     mat_files: List of paths to the 'data.mat' files.
+      WARNING!!!! WILL RANDOMLY SHUFFLE THE LIST!!!
     batch_size: Size of the batch to use for training.
     buffer_size: Size of the buffer to use for the random shuffle.
     repeat: Whether the iterator should repeat.
@@ -24,10 +26,11 @@ def make_fast_dataset(mat_files):
   Returns:  
     dataset: The dataset object
   """
+  random.shuffle(mat_files)
   filenames = (tf.contrib.data.Dataset.from_tensor_slices(mat_files)
-      .shuffle(buffer_size=30)
-      .take(30)
-      .repeat())
+    .shuffle(buffer_size=50)
+    .take(50)
+    .repeat())
   dataset = filenames.flat_map(
       lambda file_name:
       tf.contrib.data.Dataset.from_tensor_slices(
