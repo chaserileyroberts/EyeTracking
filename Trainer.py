@@ -95,7 +95,7 @@ class Trainer():
     if restore is not None:
       raise NotImplementedError("Restore is not implemented")
     self.init_op = tf.group(self.iterator.initializer,
-                tf.global_variables_initializer())
+        tf.global_variables_initializer())
     if self.save_dest is not None:
       saver = tf.train.Saver(
         keep_checkpoint_every_n_hours=0.2)  # every 12 minutes.
