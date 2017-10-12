@@ -37,7 +37,7 @@ class Trainer():
     # TODO(Chase): Read in multiple files.
     dataset = dataset.map(Preprocess.gaze_images_preprocess)
     if not eval_loop:
-      dataset = dataset.shuffle(buffer_size=1000)
+      dataset = dataset.shuffle(buffer_size=10000)
     dataset = dataset.batch(batch_size)
     dataset = dataset.repeat()
     if eval_loop:
@@ -110,7 +110,7 @@ class Trainer():
       saver=saver,
       save_summaries_secs=10)
 
-  def evaluate(self, num_evals=50, eval_secs=60, timeout=None):
+  def evaluate(self, num_evals=50, eval_secs=1, timeout=None):
     """ Runs the eval loop
     Args:
       num_evals: How many times to do the eval loop.
@@ -119,7 +119,7 @@ class Trainer():
 
     """
     names_to_values, names_to_updates = slim.metrics.aggregate_metric_map({
-      "mse": slim.metrics.streaming_root_mean_squared_error(
+      "mse": tf.metrics.mean_absolute_error(
         self.model.prediction, self.gaze)  # Get approximate error
     })
     summary_ops = []
