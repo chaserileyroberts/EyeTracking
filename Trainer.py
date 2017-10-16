@@ -123,8 +123,8 @@ class Trainer():
     summary_ops.append(op)
     # Force it not to use all of the CPUs.
     config = tf.ConfigProto(
-      intra_op_parallelism_threads=1,
-      inter_op_parallelism_threads=1)
+      intra_op_parallelism_threads=16,
+      inter_op_parallelism_threads=16)
     slim.evaluation.evaluation_loop(
       '',
       self.save_dest,
