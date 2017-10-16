@@ -76,11 +76,6 @@ class Trainer():
       self.gaze_normal, self.model.prediction)
     self.pixels_off = tf.reduce_mean(tf.reduce_mean(tf.abs(
       self.gaze - (self.model.prediction + 1) * (1500, 800))))
-    tf.summary.scalar("loss", self.loss)
-    tf.summary.scalar("pixel_difference", self.pixels_off)
-    # Histogram for all of the variables.
-    for var in tf.trainable_variables():
-      tf.summary.histogram(var.name, var)
     self.train_op = slim.learning.create_train_op(self.loss, self.opt)
 
   def train(self, training_steps=100000, restore=None):
@@ -90,9 +85,11 @@ class Trainer():
       restore: Possible checkpoint to restore from. If None, then nothing is
         restored.
     """
-    # TODO(Chase):
-    # Should the optimizer and loss be in the model code?
-    # TODO(Chase): Include validation testing during training.
+    tf.summary.scalar("loss", self.loss)
+    tf.summary.scalar("pixel_difference", self.pixels_off)
+    # Histogram for all of the variables.
+    for var in tf.trainable_variables():
+      tf.summary.histogram(var.name, var)
     if restore is not None:
       raise NotImplementedError("Restore is not implemented")
     self.init_op = tf.group(#self.iterator.initializer,
