@@ -107,11 +107,11 @@ class Trainer():
       saver=saver,
       save_summaries_secs=10)
 
-  def evaluate(self, num_evals=50, eval_secs=1, timeout=None):
+  def evaluate(self, num_evals=50, eval_secs=600, timeout=None):
     """ Runs the eval loop
     Args:
       num_evals: How many times to do the eval loop.
-      eval_secs: How often to run the eval loop.
+      eval_secs: How often to run the eval loop. Default to 10 minutes
       timeout: Default to None, only used for unit testing.
 
     """
@@ -125,6 +125,8 @@ class Trainer():
       op = tf.summary.scalar(metric_name, metric_value)
       op = tf.Print(op, [metric_value], metric_name)
     summary_ops.append(op)
+    # Force it not to use all of the CPUs.
+    config = tf.ConfigProto(device_count={'CPU': 16})
     slim.evaluation.evaluation_loop(
       '',
       self.save_dest,
@@ -133,4 +135,5 @@ class Trainer():
       eval_interval_secs=eval_secs,
       eval_op=list(names_to_updates.values()),
       summary_op=tf.summary.merge_all(),
-      timeout=timeout)
+      timeout=timeout,
+      session_config=config)

@@ -43,7 +43,3 @@ def test_eval_loop(tmpdir):
                      eval_secs=1,
                      timeout=1)
 
-
-def test_restoring(tmpdir):
-    # TODO(Chase): Test this
-    pass
