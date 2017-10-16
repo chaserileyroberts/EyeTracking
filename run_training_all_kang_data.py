@@ -46,13 +46,16 @@ if __name__ == '__main__':
     data_paths = [path + x[2:].strip() for x in open('all_mat_files.txt')]
   else:
     data_paths = [path + x for x in all_kang_data]
-
+  device = ''
+  if args.evaluate:
+    device = '/cpu:0'
   batch_size = 32
-  trainer = Trainer.Trainer(
-      data_paths, 
-      batch_size=batch_size, 
-      save_dest='/media/roberc4/kang/models/',
-      eval_loop=args.evaluate)
+  with tf.device(device):
+    trainer = Trainer.Trainer(
+        data_paths, 
+        batch_size=batch_size, 
+        save_dest='/media/roberc4/kang/models/',
+        eval_loop=args.evaluate)
   if args.evaluate:
     trainer.evaluate(num_evals=100)
   else:
