@@ -40,11 +40,7 @@ class Trainer():
       dataset = dataset.shuffle(buffer_size=10000)
     dataset = dataset.batch(batch_size)
     dataset = dataset.repeat()
-    if eval_loop:
-      self.iterator = dataset.make_one_shot_iterator()
-    else:
-      self.iterator = dataset.make_one_shot_iterator()
-      #self.iterator = dataset.make_initializable_iterator()
+    self.iterator = dataset.make_one_shot_iterator()
     (self.face_tensor,
      self.left_eye_tensor,
      self.right_eye_tensor,
@@ -96,7 +92,7 @@ class Trainer():
         tf.global_variables_initializer())
     if self.save_dest is not None:
       saver = tf.train.Saver(
-        keep_checkpoint_every_n_hours=0.2)  # every 12 minutes.
+        keep_checkpoint_every_n_hours=0.01)  # every 12 minutes.
     else:
       saver = None
     slim.learning.train(
@@ -107,11 +103,11 @@ class Trainer():
       saver=saver,
       save_summaries_secs=10)
 
-  def evaluate(self, num_evals=50, eval_secs=600, timeout=None):
+  def evaluate(self, num_evals=50, eval_secs=30, timeout=None):
     """ Runs the eval loop
     Args:
       num_evals: How many times to do the eval loop.
-      eval_secs: How often to run the eval loop. Default to 10 minutes
+      eval_secs: How often to run the eval loop. Default to 1 minute
       timeout: Default to None, only used for unit testing.
 
     """
@@ -126,7 +122,9 @@ class Trainer():
       op = tf.Print(op, [metric_value], metric_name)
     summary_ops.append(op)
     # Force it not to use all of the CPUs.
-    config = tf.ConfigProto(device_count={'CPU': 16})
+    config = tf.ConfigProto(
+      intra_op_parallelism_threads=1,
+      inter_op_parallelism_threads=1)
     slim.evaluation.evaluation_loop(
       '',
       self.save_dest,
