@@ -113,7 +113,7 @@ class Trainer():
 
     """
     names_to_values, names_to_updates = slim.metrics.aggregate_metric_map({
-      "mse": tf.metrics.mean_absolute_error(
+      "pixel_difference": tf.metrics.mean_absolute_error(
         (self.model.prediction + 1) * (1500, 800), self.gaze)  # Get approximate error
     })
     summary_ops = []
