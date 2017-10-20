@@ -44,9 +44,10 @@ all_kang_data = kang_center_files + kang_left_files + kang_right_files
 if __name__ == '__main__':
   path = "/media/roberc4/kang/final_dataset/"
   if args.evaluate:
-    data_paths = [path + x for x in test_data]
     if args.varied_eval:
       data_paths += [path + x[2:].strip() for x in open('all_mat_files.txt') if 'day01' in x]
+    else:
+      data_paths = [path + x for x in test_data]
   if args.all:
     data_paths = [path + x[2:].strip() for x in open('all_mat_files.txt')]
     if args.varied_eval:
