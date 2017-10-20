@@ -63,7 +63,7 @@ if __name__ == '__main__':
     device = '/cpu:0'
   batch_size = 32
   with tf.device(device):
-    print data_paths
+    print(data_paths)
     trainer = Trainer.Trainer(
         data_paths, 
         batch_size=batch_size, 
