@@ -69,6 +69,6 @@ if __name__ == '__main__':
         save_dest='/media/roberc4/kang/' + args.modeldir,
         eval_loop=args.evaluate)
   if args.evaluate:
-    trainer.evaluate(num_evals=100)
+    trainer.evaluate(num_evals=150)
   else:
     trainer.train()
