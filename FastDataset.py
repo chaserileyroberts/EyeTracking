@@ -28,8 +28,8 @@ def make_fast_dataset(mat_files):
   """
   random.shuffle(mat_files)
   filenames = (tf.contrib.data.Dataset.from_tensor_slices(mat_files)
-    .shuffle(buffer_size=50)
-    .take(50)
+    .shuffle(buffer_size=100)
+    .take(100)
     .repeat())
   dataset = filenames.flat_map(
       lambda file_name:
