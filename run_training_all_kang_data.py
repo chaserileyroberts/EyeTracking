@@ -46,7 +46,7 @@ if __name__ == '__main__':
   if args.evaluate:
     data_paths = [path + x for x in test_data]
     if args.varied_eval:
-      data_paths + [path += x[2:].strip() for x in open('all_mat_files.txt') if 'day01' in path]
+      data_paths += [path + x[2:].strip() for x in open('all_mat_files.txt') if 'day01' in path]
   if args.all:
     data_paths = [path + x[2:].strip() for x in open('all_mat_files.txt')]
     if args.varied_eval:
