@@ -7,6 +7,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument('-evaluate', '-e', action='store_true', default=False)
 parser.add_argument('-all', '-a', action='store_true', default=False)
 parser.add_argument('-nokang', '-k', action='store_true', default=False)
+parser.add_argument('-varied_eval', '-v', action='store_true', default=False)
 args = parser.parse_args()
 
 test_data = [
@@ -43,8 +44,12 @@ if __name__ == '__main__':
   path = "/media/roberc4/kang/final_dataset/"
   if args.evaluate:
     data_paths = [path + x for x in test_data]
+    if args.varied_eval:
+      data_paths + [path + x[2:].strip() for x in open('all_mat_files.txt') if 'day01' in path]
   if args.all:
     data_paths = [path + x[2:].strip() for x in open('all_mat_files.txt')]
+    if args.varied_eval:
+      data_paths = [p for p in data_paths if 'day01' not in p]
   else:
     data_paths = [path + x for x in all_kang_data]
   if args.nokang:
