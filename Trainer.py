@@ -118,7 +118,6 @@ class Trainer():
     })
     summary_ops = []
     for metric_name, metric_value in names_to_values.items():
-      print(metric_name)
       op = tf.summary.scalar(metric_name, metric_value)
       op = tf.Print(op, [metric_value], metric_name)
     summary_ops.append(op)
