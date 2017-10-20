@@ -6,6 +6,7 @@ parser = argparse.ArgumentParser(
     description='Run Eye Tracking Convnet Training.')
 parser.add_argument('-evaluate', '-e', action='store_true', default=False)
 parser.add_argument('-all', '-a', action='store_true', default=False)
+parser.add_argument('-nokang', '-k', action='store_true', default=False)
 args = parser.parse_args()
 
 test_data = [
@@ -46,6 +47,8 @@ if __name__ == '__main__':
     data_paths = [path + x[2:].strip() for x in open('all_mat_files.txt')]
   else:
     data_paths = [path + x for x in all_kang_data]
+  if args.nokang:
+    data_paths = [p for p in data_paths if 'kang/day' not in p]
   device = ''
   if args.evaluate:
     device = '/cpu:0'
@@ -54,7 +57,7 @@ if __name__ == '__main__':
     trainer = Trainer.Trainer(
         data_paths, 
         batch_size=batch_size, 
-        save_dest='/media/roberc4/kang/models/',
+        save_dest='/media/roberc4/kang/no_kang_models/',
         eval_loop=args.evaluate)
   if args.evaluate:
     trainer.evaluate(num_evals=100)
