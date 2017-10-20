@@ -45,13 +45,14 @@ if __name__ == '__main__':
   path = "/media/roberc4/kang/final_dataset/"
   if args.evaluate:
     if args.varied_eval:
-      data_paths += [path + x[2:].strip() for x in open('all_mat_files.txt') if 'day01' in x]
+      data_paths = [path + x[2:].strip() for x in open('all_mat_files.txt') if 'day01' in x]
     else:
       data_paths = [path + x for x in test_data]
   if args.all:
-    data_paths = [path + x[2:].strip() for x in open('all_mat_files.txt')]
     if args.varied_eval:
-      data_paths = [p for p in data_paths if 'day01' not in p]
+      data_paths = [path + x[2:].strip() for x in open('all_mat_files.txt') if 'day01' not in x]
+    else:
+      data_paths = [path + x[2:].strip() for x in open('all_mat_files.txt')]
   else:
     data_paths = [path + x for x in all_kang_data]
   if args.nokang:
