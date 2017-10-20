@@ -48,7 +48,7 @@ if __name__ == '__main__':
       data_paths = [path + x[2:].strip() for x in open('all_mat_files.txt') if 'day01' in x]
     else:
       data_paths = [path + x for x in test_data]
-  if args.all:
+  elif args.all:
     if args.varied_eval:
       data_paths = [path + x[2:].strip() for x in open('all_mat_files.txt') if 'day01' not in x]
     else:
