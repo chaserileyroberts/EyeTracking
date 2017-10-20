@@ -9,6 +9,7 @@ parser.add_argument('-all', '-a', action='store_true', default=False)
 parser.add_argument('-nokang', '-k', action='store_true', default=False)
 parser.add_argument('-varied_eval', '-v', action='store_true', default=False)
 parser.add_argument('-modeldir',type=str,default='models')
+parser.add_argument('-evalGpu', '-g', action='store_true', default=False)
 args = parser.parse_args()
 
 test_data = [
@@ -58,7 +59,7 @@ if __name__ == '__main__':
   if args.nokang:
     data_paths = [p for p in data_paths if 'kang/day' not in p]
   device = ''
-  if args.evaluate:
+  if args.evaluate and not args.evalGpu:
     device = '/cpu:0'
   batch_size = 32
   with tf.device(device):
