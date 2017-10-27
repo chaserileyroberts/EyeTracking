@@ -104,12 +104,13 @@ class Trainer():
       save_summaries_secs=60,
       save_interval_secs=360)
 
-  def evaluate(self, num_evals=50, eval_secs=30, timeout=None):
+  def evaluate(self, num_evals=50, eval_secs=30, timeout=None, person=None):
     """ Runs the eval loop
     Args:
       num_evals: How many times to do the eval loop.
       eval_secs: How often to run the eval loop. Default to 1 minute
       timeout: Default to None, only used for unit testing.
+      person: Person we are evaling.
 
     """
     names_to_values, names_to_updates = slim.metrics.aggregate_metric_map({
@@ -128,7 +129,7 @@ class Trainer():
     slim.evaluation.evaluation_loop(
       '',
       self.save_dest,
-      self.save_dest + "/eval",
+      self.save_dest + "/eval" + person if person is not None else "",
       num_evals=num_evals,
       eval_interval_secs=eval_secs,
       eval_op=list(names_to_updates.values()),
