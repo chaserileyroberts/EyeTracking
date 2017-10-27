@@ -10,6 +10,8 @@ parser.add_argument('-nokang', '-k', action='store_true', default=False)
 parser.add_argument('-varied_eval', '-v', action='store_true', default=False)
 parser.add_argument('-modeldir',type=str,default='models')
 parser.add_argument('-evalGpu', '-g', action='store_true', default=False)
+parser.add_argument('-person', '-p', type=str, default=None)
+
 args = parser.parse_args()
 
 test_data = [
@@ -47,6 +49,8 @@ if __name__ == '__main__':
   if args.evaluate:
     if args.varied_eval:
       data_paths = [path + x[2:].strip() for x in open('all_mat_files.txt') if 'day01' in x]
+      if args.person is not None:
+        data_paths = [p for p in data_paths if args.person in p]
     else:
       data_paths = [path + x for x in test_data]
   elif args.all:
@@ -54,6 +58,8 @@ if __name__ == '__main__':
       data_paths = [path + x[2:].strip() for x in open('all_mat_files.txt') if 'day01' not in x]
     else:
       data_paths = [path + x[2:].strip() for x in open('all_mat_files.txt')]
+    if args.person is not None:
+      data_paths = [p for p in data_paths if args.person in p]
   else:
     data_paths = [path + x for x in all_kang_data]
   if args.nokang:
@@ -70,6 +76,6 @@ if __name__ == '__main__':
         save_dest='/media/roberc4/kang/' + args.modeldir,
         eval_loop=args.evaluate)
   if args.evaluate:
-    trainer.evaluate(num_evals=150)
+    trainer.evaluate(num_evals=500)
   else:
     trainer.train()
