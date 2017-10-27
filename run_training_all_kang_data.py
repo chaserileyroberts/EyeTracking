@@ -67,7 +67,7 @@ if __name__ == '__main__':
     trainer = Trainer.Trainer(
         data_paths, 
         batch_size=batch_size, 
-        save_dest='/media/roberc4/kang/' + args.modeldir,
+        save_dest='/media/roberc4/kang/chase_models' + args.modeldir,
         eval_loop=args.evaluate)
   if args.evaluate:
     trainer.evaluate(num_evals=150)
