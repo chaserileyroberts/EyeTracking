@@ -75,7 +75,7 @@ if __name__ == '__main__':
         batch_size=batch_size, 
         save_dest='/media/roberc4/kang/chase_models/' + args.modeldir,
         eval_loop=args.evaluate)
-  if args.evaluate:
-    trainer.evaluate(num_evals=500)
-  else:
-    trainer.train()
+    if args.evaluate:
+      trainer.evaluate(num_evals=500)
+    else:
+      trainer.train()
