@@ -129,7 +129,7 @@ class Trainer():
     slim.evaluation.evaluation_loop(
       '',
       self.save_dest,
-      self.save_dest + "/eval" + person if person is not None else "",
+      self.save_dest + "/eval",
       num_evals=num_evals,
       eval_interval_secs=eval_secs,
       eval_op=list(names_to_updates.values()),
