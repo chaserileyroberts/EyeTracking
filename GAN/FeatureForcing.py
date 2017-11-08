@@ -33,7 +33,7 @@ class FFGAN():
         real_img, self.decoded_real)
     self.img_diff_fake = tf.losses.mean_squared_error(
         self.gen_out, self.decoded_fake)
-    self.descrim_loss = self.img_diff_real - self.k * self.img_diff_fake
+    self.descrim_loss = self.img_diff_real #- self.k * self.img_diff_fake
     self.gen_loss = self.img_diff_fake
     # TODO(chase): Test this
     self.new_k = (self.k 
