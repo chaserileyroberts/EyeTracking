@@ -1,6 +1,8 @@
 import tensorflow as tf
+import Preprocess
 
 slim = tf.contrib.slim
+
 
 class FFGAN():
   def __init__(self, real_img, z_vector, gamma=0.5):
@@ -65,10 +67,14 @@ class FFGAN():
     tf.summary.scalar("descrim_loss", self.descrim_loss)
     tf.summary.scalar("k", self.k)
     tf.summary.scalar("model_convergence", self.convergence)
-    tf.summary.image("real_image", self.real_img)
-    tf.summary.image("generated_image", self.gen_out)
-    tf.summary.image("real_reconstruction", self.decoded_real)
-    tf.summary.image("generated_reconstruction", self.decoded_fake)
+    tf.summary.image("real_image", 
+            Preprocess.image_correction(self.real_img))
+    tf.summary.image("generated_image", 
+            Preprocess.image_correction(self.gen_out))
+    tf.summary.image("real_reconstruction", 
+            Preprocess.image_correction(self.decoded_real))
+    tf.summary.image("generated_reconstruction", 
+            Preprocess.image_correction(self.decoded_fake))
     tf.summary.histogram("read_encodings", self.encoding_real)
     tf.summary.histogram("fake_encodings", self.encoding_fake)
     # Histogram for all of the variables.

@@ -31,3 +31,8 @@ def gaze_images_preprocess(face, left, right, gaze, pts):
           image_preprocess(right),
           gaze,
           pts)
+
+def image_correction(tensor):
+  red, green, blue = tf.split(tensor, 3, 3)
+  bgr = tf.concat([blue, green, red], 3)
+  return bgr

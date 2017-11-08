@@ -11,11 +11,6 @@ import FastDataset
 slim = tf.contrib.slim
 
 
-def image_correction(tensor):
-  red, green, blue = tf.split(tensor, 3, 3)
-  bgr = tf.concat([blue, green, red], 3)
-  return bgr
-
 class Trainer():
 
   """Trains and evalualuates the EyeConvnet model"""
@@ -41,11 +36,11 @@ class Trainer():
     tf.summary.histogram("gaze", self.gaze)
     self.gaze_normal = (self.gaze / (1500, 800)) - 1  
     tf.summary.image(
-      "face", image_correction(self.face_tensor))
+      "face", Preprocess.image_correction(self.face_tensor))
     tf.summary.image(
-      "left", image_correction(self.left_eye_tensor))
+      "left", Preprocess.image_correction(self.left_eye_tensor))
     tf.summary.image(
-      "right", image_correction(self.right_eye_tensor))
+      "right", Preprocess.image_correction(self.right_eye_tensor))
     self.save_dest = save_dest
     self.model = EyeConvnet.EyeConvnet(
       not eval_loop,
