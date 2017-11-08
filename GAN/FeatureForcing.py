@@ -14,9 +14,9 @@ class FFGAN():
     """
     self.real_img = real_img
     self.z_vector = z_vector
-    self.prop_gain = 0.001
+    self.prop_gain = 0.01
     self.encoding_size = z_vector.shape[1]
-    self.k = tf.Variable(0.0, name="k", trainable=False)
+    self.k = tf.Variable(10.0, name="k", trainable=False)
     encoder_template = tf.make_template("encoder", self.make_encoder)
     decoder_gen_template = tf.make_template(
         "decoder_generator", self.make_decoder_generator)
