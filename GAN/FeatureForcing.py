@@ -17,15 +17,14 @@ class FFGAN():
     self.prop_gain = 0.001
     self.encoding_size = z_vector.shape[1]
     self.k = tf.Variable(0.0, name="k", trainable=False)
-    encoder_template = tf.make_template("encoder", self.make_encoder)
+    encoder_template = tf.make_template("descrim/encoder", self.make_encoder)
     decoder_gen_template = tf.make_template(
-        "decoder_generator", self.make_decoder_generator)
+        "descrim/decoder", self.make_decoder_generator)
     # Make encoder/decoder for the real images.
     self.encoding_real = encoder_template(real_img, self.encoding_size)
     self.decoded_real = decoder_gen_template(self.encoding_real)
-
-    # Make results for the generated images
-    self.gen_out = decoder_gen_template(z_vector)
+    with tf.variable_scope("generator"):
+        self.gen_out = self.make_decoder_generator(z_vector)
     self.encoding_fake = encoder_template(self.gen_out, self.encoding_size)
     self.decoded_fake = decoder_gen_template(self.encoding_fake)
 
@@ -43,9 +42,10 @@ class FFGAN():
 
     # Build optimizers. Make sure to only train certain variables.
     optimizer = tf.train.AdamOptimizer()
-    self.encoder_vars = tf.trainable_variables() #tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES) #scope="encoder")
+    self.encoder_vars = tf.get_collection(
+        tf.GraphKeys.GLOBAL_VARIABLES, scope="descrim")
     self.decoder_gen_vars = tf.get_collection(
-        tf.GraphKeys.GLOBAL_VARIABLES, scope="decoder_generator")
+        tf.GraphKeys.GLOBAL_VARIABLES, scope="generator")
     self.train_descrim = slim.learning.create_train_op(
         self.descrim_loss, 
         optimizer,
