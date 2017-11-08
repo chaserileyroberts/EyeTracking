@@ -1,7 +1,10 @@
 import pytest
 import tensorflow as tf 
-import EyeBEGAN
+import GAN.EyeBEGAN as EyeBEGAN
 
+def setup():
+  tf.reset_default_graph()
+  
 def test_EyeBEGAN_sanity():
   z = tf.placeholder(tf.float32, (None, 100))
   face_tensor = tf.placeholder(tf.float32, (None, 128, 128, 3))

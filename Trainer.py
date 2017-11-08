@@ -32,28 +32,14 @@ class Trainer():
     """
     # TODO(Chase): This may not work beyond some large files.
     # We'll test and debug later if that is the case.
-
-    dataset = FastDataset.make_fast_dataset(mat_files)
-    # TODO(Chase): Read in multiple files.
-    dataset = dataset.map(Preprocess.gaze_images_preprocess)
-    if not eval_loop:
-      dataset = dataset.shuffle(buffer_size=10000)
-    dataset = dataset.batch(batch_size)
-    dataset = dataset.repeat()
-    self.iterator = dataset.make_one_shot_iterator()
     (self.face_tensor,
-     self.left_eye_tensor,
-     self.right_eye_tensor,
-     self.gaze,
-     self.pts) = self.iterator.get_next()
+    self.left_eye_tensor,
+    self.right_eye_tensor,
+    self.gaze,
+    self.pts) = FastDataset.get_eyetracking_tensors(
+        mat_files, batch_size, eval_loop)
     tf.summary.histogram("gaze", self.gaze)
     self.gaze_normal = (self.gaze / (1500, 800)) - 1  
-    # Dimensions of the monitor.
-    self.face_tensor.set_shape((None, 128, 128, 3))
-    self.left_eye_tensor.set_shape((None, 36, 60, 3))
-    self.right_eye_tensor.set_shape((None, 36, 60, 3))
-    self.gaze.set_shape((None, 2))
-    self.pts.set_shape((None, 102))
     tf.summary.image(
       "face", image_correction(self.face_tensor))
     tf.summary.image(
@@ -88,8 +74,7 @@ class Trainer():
       tf.summary.histogram(var.name, var)
     if restore is not None:
       raise NotImplementedError("Restore is not implemented")
-    self.init_op = tf.group(#self.iterator.initializer,
-        tf.global_variables_initializer())
+    self.init_op = tf.global_variables_initializer()
     if self.save_dest is not None:
       saver = tf.train.Saver(
         keep_checkpoint_every_n_hours=0.01)  # every 12 minutes.

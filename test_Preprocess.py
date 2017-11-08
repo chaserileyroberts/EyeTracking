@@ -2,6 +2,8 @@ import tensorflow as tf
 import Preprocess
 import numpy as np
 
+def setup():
+  tf.reset_default_graph()
 
 def test_random_image():
     # Makes tests deterministic.
