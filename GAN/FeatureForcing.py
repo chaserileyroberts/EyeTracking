@@ -47,10 +47,14 @@ class FFGAN():
         tf.GraphKeys.GLOBAL_VARIABLES, scope="encoder")
     self.decoder_gen_vars = tf.get_collection(
         tf.GraphKeys.GLOBAL_VARIABLES, scope="decoder_generator")
-    self.train_descrim = optimizer.minimize(self.descrim_loss, 
-        var_list=self.encoder_vars)
-    self.train_generator = optimizer.minimize(self.gen_loss, 
-        var_list=self.decoder_gen_vars)
+    self.train_descrim = slim.learning.create_train_op(
+        self.descrim_loss, 
+        optimizer,
+        variables_to_train=self.encoder_vars)
+    self.train_generator = slim.learning.create_train_op(
+        self.gen_loss, 
+        optimizer,
+        variables_to_train=self.decoder_gen_vars)
     # Training step for GAN
     self.gan_train_op = tf.group(
         self.train_descrim, self.train_generator, self.update_k)

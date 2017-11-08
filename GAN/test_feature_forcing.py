@@ -55,8 +55,8 @@ def test_new_k_calculation_decrease():
   assert sess.run(model.k) < 0.0
 
 def test_correct_vars_train_generator():
-  img = tf.placeholder(tf.float32, (None, 128, 128, 3))
-  z_noise = tf.placeholder(tf.float32, (None, 128))
+  img = tf.placeholder(tf.float32, (None, 128, 128, 3), name="Image")
+  z_noise = tf.placeholder(tf.float32, (None, 128), name="z_noise")
   model = FF.FFGAN(img, z_noise)
   sess = tf.Session()
   sess.run(tf.global_variables_initializer())
@@ -113,3 +113,35 @@ def test_gan_train_op_sanity():
       z_noise: np.ones((1, 128)),
       img: np.ones((1, 128, 128, 3))
     })
+
+def test_input_requirements():
+  img = tf.placeholder(tf.float32, (None, 128, 128, 3), name="Image")
+  z_noise = tf.placeholder(tf.float32, (None, 128), name="z_noise")
+  model = FF.FFGAN(img, z_noise)
+  sess = tf.Session()
+  sess.run(tf.global_variables_initializer())
+  with pytest.raises(tf.errors.InvalidArgumentError):
+    _ = sess.run(model.gen_out, feed_dict={
+          img: np.ones((1, 128, 128, 3)),
+        })
+
+  with pytest.raises(tf.errors.InvalidArgumentError):
+    _ = sess.run(model.encoding_fake, feed_dict={
+          img: np.ones((1, 128, 128, 3)),
+        })
+
+
+  with pytest.raises(tf.errors.InvalidArgumentError):
+    _ = sess.run(model.decoded_fake, feed_dict={
+          img: np.ones((1, 128, 128, 3)),
+        })
+
+  with pytest.raises(tf.errors.InvalidArgumentError):
+    _ = sess.run(model.encoding_real, feed_dict={
+          z_noise: np.ones((1, 128)),
+        })
+
+  with pytest.raises(tf.errors.InvalidArgumentError):
+    _ = sess.run(model.decoded_real, feed_dict={
+          z_noise: np.ones((1, 128)),
+        })

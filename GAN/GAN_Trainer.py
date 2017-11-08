@@ -27,7 +27,6 @@ class GAN_Trainer:
 
   def train(self, training_steps=100000):
     print(training_steps)
-    slim.get_or_create_global_step()
     self.init_op = tf.global_variables_initializer()
     if self.save_dest is not None:
       saver = tf.train.Saver(
@@ -37,10 +36,6 @@ class GAN_Trainer:
     sess = tf.Session()
     sess.run(self.init_op)
     merged = tf.summary.merge_all()
-    
-    for i in range(training_steps):
-      sess.run([self.model.gan_train_op, merged])
-    """
     slim.learning.train(
       self.model.gan_train_op,
       self.save_dest,
@@ -49,5 +44,4 @@ class GAN_Trainer:
       saver=saver,
       save_summaries_secs=60,
       save_interval_secs=360)
-    """
     

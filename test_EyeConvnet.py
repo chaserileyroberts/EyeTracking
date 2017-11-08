@@ -53,34 +53,37 @@ def test_needs_inputs():
         right_eye_tensor = tf.placeholder(tf.float32, (None, 36, 60, 3))
         face_pts_tensor = tf.placeholder(tf.float32, (None, 102))
         is_training = False
+
         model = EyeConvnet.EyeConvnet(
             False, face_tensor, left_eye_tensor, right_eye_tensor,
                               face_pts_tensor)
+        opt = tf.train.AdamOptimizer()
+        train = opt.minimize(model.prediction)
         sess = tf.Session()
         sess.run(tf.global_variables_initializer())
         # No face_pts
-        with pytest.raises(Exception):
+        with pytest.raises(tf.errors.InvalidArgumentError):
             _ = sess.run(model.prediction, feed_dict={
                          face_tensor: np.ones((1, 128, 128, 3)),
                          left_eye_tensor: np.ones((1, 36, 60, 3)),
                          right_eye_tensor: np.ones((1, 36, 60, 3)),
                          })
         # No right eye
-        with pytest.raises(Exception):
+        with pytest.raises(tf.errors.InvalidArgumentError):
             _ = sess.run(model.prediction, feed_dict={
                          face_tensor: np.ones((1, 128, 128, 3)),
                          left_eye_tensor: np.ones((1, 36, 60, 3)),
                          face_pts_tensor: np.ones((1, 102))
                          })
         # No left eye
-        with pytest.raises(Exception):
+        with pytest.raises(tf.errors.InvalidArgumentError):
             _ = sess.run(train, feed_dict={
                          face_tensor: np.ones((1, 128, 128, 3)),
                          right_eye_tensor: np.ones((1, 36, 60, 3)),
                          face_pts_tensor: np.ones((1, 102))
                          })
         # No face
-        with pytest.raises(Exception):
+        with pytest.raises(tf.errors.InvalidArgumentError):
             _ = sess.run(train, feed_dict={
                          left_eye_tensor: np.ones((1, 36, 60, 3)),
                          right_eye_tensor: np.ones((1, 36, 60, 3)),
