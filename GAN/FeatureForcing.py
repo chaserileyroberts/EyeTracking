@@ -56,7 +56,7 @@ class FFGAN():
         variables_to_train=self.decoder_gen_vars)
     # Training step for GAN
     self.gan_train_op = tf.group(
-        self.train_descrim, self.train_generator, self.update_k)
+        self.train_descrim, self.update_k)
 
     self.convergence = (
         self.img_diff_real 
