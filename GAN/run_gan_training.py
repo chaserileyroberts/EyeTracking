@@ -33,5 +33,5 @@ all_kang_data = kang_center_files + kang_left_files + kang_right_files + test_da
 
 if __name__ == '__main__':
   path = "/media/roberc4/kang/final_dataset/"
-  trainer = Trainer(all_kang_data, 16,  None)
+  trainer = GAN_Trainer(all_kang_data, 16,  None)
   trainer.train(100000)
