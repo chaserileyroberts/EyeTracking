@@ -15,7 +15,7 @@ class GAN_Trainer:
       save_dest: Where to save the models and events.
           Default to None
     """
-    self.z_noise = tf.random_uniform([batch_size, 128], min_val=-1, max_val=1)
+    self.z_noise = tf.random_uniform([batch_size, 128], minval=-1, maxval=1)
     (self.face_tensor,
     self.left_eye_tensor,
     self.right_eye_tensor,
