@@ -43,8 +43,8 @@ class FFGAN():
 
     # Build optimizers. Make sure to only train certain variables.
     optimizer = tf.train.AdamOptimizer()
-    self.encoder_vars = tf.get_collection(
-        tf.GraphKeys.GLOBAL_VARIABLES, scope="encoder")
+    self.encoder_vars = tf.trainable_variables() #tf.get_collection(
+        #tf.GraphKeys.GLOBAL_VARIABLES, scope="encoder")
     self.decoder_gen_vars = tf.get_collection(
         tf.GraphKeys.GLOBAL_VARIABLES, scope="decoder_generator")
     self.train_descrim = slim.learning.create_train_op(
@@ -79,7 +79,7 @@ class FFGAN():
             Preprocess.image_correction(self.decoded_real))
     tf.summary.image("generated_reconstruction", 
             Preprocess.image_correction(self.decoded_fake))
-    tf.summary.histogram("read_encodings", self.encoding_real)
+    tf.summary.histogram("real_encodings", self.encoding_real)
     tf.summary.histogram("fake_encodings", self.encoding_fake)
     # Histogram for all of the variables.
     for var in tf.trainable_variables():
