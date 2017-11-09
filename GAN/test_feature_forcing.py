@@ -103,16 +103,34 @@ def test_var_amounts():
   all_vars = set(tf.trainable_variables())
   assert all_vars == model_vars
 
-def test_gan_train_op_sanity():
+def test_gan_train_op():
   img = tf.placeholder(tf.float32, (None, 128, 128, 3))
   z_noise = tf.placeholder(tf.float32, (None, 128))
   model = FF.FFGAN(img, z_noise)
   sess = tf.Session()
   sess.run(tf.global_variables_initializer())
+  before = sess.run(tf.trainable_variables())
   sess.run(model.gan_train_op, feed_dict={
-      z_noise: np.ones((1, 128)),
+      z_noise: np.ones((1, 128)) /100,
+      img: np.ones((1, 128, 128, 3)) /100
+    })
+  after = sess.run(tf.trainable_variables())
+  for a, b, name in zip(before, after, [n.name for n in tf.trainable_variables()]):
+    if not (a != b).any():
+      raise Exception(name + " Tensor did not change")
+
+
+def test_reconstruction():
+  img = tf.placeholder(tf.float32, (None, 128, 128, 3))
+  z_noise = tf.placeholder(tf.float32, (None, 128))
+  model = FF.FFGAN(img, z_noise)
+  sess = tf.Session()
+  sess.run(tf.global_variables_initializer())
+  decoded = sess.run(model.decoded_real, feed_dict={
       img: np.ones((1, 128, 128, 3))
     })
+  assert (decoded > 0).any()
+  assert (decoded < 0).any()
 
 def test_input_requirements():
   img = tf.placeholder(tf.float32, (None, 128, 128, 3), name="Image")

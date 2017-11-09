@@ -120,14 +120,18 @@ class FFGAN():
     net = slim.fully_connected(encoding, 256)
     net = tf.reshape(net, [-1, 16, 16, 1])
     net = slim.conv2d_transpose(net, 32, [3, 3], scope="conv1_3x3")
-    net = tf.image.resize_images(net, [int(i) * 2 for i in net.shape[1:3]])
+    net = tf.image.resize_images(net, [int(i) * 2 for i in net.shape[1:3]],
+        tf.image.ResizeMethod.NEAREST_NEIGHBOR)
     net = slim.conv2d_transpose(net, 128, [3, 3], scope="conv2_3x3")
-    net = tf.image.resize_images(net, [int(i) * 2 for i in net.shape[1:3]])
+    net = tf.image.resize_images(net, [int(i) * 2 for i in net.shape[1:3]],
+        tf.image.ResizeMethod.NEAREST_NEIGHBOR)
     net = slim.conv2d_transpose(net, 128, [3, 3], scope="conv3_3x3")
     net = slim.conv2d_transpose(net, 64, [5, 5], scope="conv4_5x5")
-    net = tf.image.resize_images(net, [int(i) * 2 for i in net.shape[1:3]])
+    net = tf.image.resize_images(net, [int(i) * 2 for i in net.shape[1:3]],
+        tf.image.ResizeMethod.NEAREST_NEIGHBOR)
     net = slim.conv2d_transpose(net, 64, [5, 5], scope="conv5_5x5")
-    net = slim.conv2d_transpose(net, 3, [11, 11], scope="conv6_11x11")
+    net = slim.conv2d_transpose(net, 3, [11, 11], scope="conv6_11x11",
+        activation_fn=None)
     return net
 
 
