@@ -16,7 +16,7 @@ class FFGAN():
     self.z_vector = z_vector
     self.prop_gain = 0.001
     self.encoding_size = z_vector.shape[1]
-    self.k = tf.Variable(.01, name="k", trainable=False)
+    self.k = tf.Variable(0.0, name="k", trainable=False)
     encoder_template = tf.make_template("encoder", self.make_encoder)
     decoder_gen_template = tf.make_template(
         "decoder_generator", self.make_decoder_generator)
@@ -35,10 +35,10 @@ class FFGAN():
     self.img_diff_fake = tf.losses.mean_squared_error(
         self.gen_out, self.decoded_fake)
     self.descrim_loss = self.img_diff_real - self.k * self.img_diff_fake
-    self.gen_loss = self.k * self.img_diff_fake
+    self.gen_loss = self.img_diff_fake
     # TODO(chase): Test this
     self.new_k = (self.k 
-        + self.prop_gain * (gamma * self.descrim_loss - self.img_diff_fake))
+        + self.prop_gain * (gamma * self.descrim_loss - self.gen_loss))
     self.update_k = tf.assign(self.k, self.new_k)    
 
     # Build optimizers. Make sure to only train certain variables.
