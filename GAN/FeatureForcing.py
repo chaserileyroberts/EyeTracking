@@ -17,14 +17,15 @@ class FFGAN():
     self.prop_gain = 0.001
     self.encoding_size = z_vector.shape[1]
     self.k = tf.Variable(0.0, name="k", trainable=False)
-    encoder_template = tf.make_template("descrim/encoder", self.make_encoder)
+    encoder_template = tf.make_template("encoder", self.make_encoder)
     decoder_gen_template = tf.make_template(
-        "descrim/decoder", self.make_decoder_generator)
+        "decoder_generator", self.make_decoder_generator)
     # Make encoder/decoder for the real images.
     self.encoding_real = encoder_template(real_img, self.encoding_size)
     self.decoded_real = decoder_gen_template(self.encoding_real)
-    with tf.variable_scope("generator"):
-        self.gen_out = self.make_decoder_generator(z_vector)
+
+    # Make results for the generated images
+    self.gen_out = decoder_gen_template(z_vector)
     self.encoding_fake = encoder_template(self.gen_out, self.encoding_size)
     self.decoded_fake = decoder_gen_template(self.encoding_fake)
 
@@ -33,7 +34,7 @@ class FFGAN():
         real_img, self.decoded_real)
     self.img_diff_fake = tf.losses.mean_squared_error(
         self.gen_out, self.decoded_fake)
-    self.descrim_loss = self.img_diff_real #- self.k * self.img_diff_fake
+    self.descrim_loss = self.img_diff_real - self.k * self.img_diff_fake
     self.gen_loss = self.img_diff_fake
     # TODO(chase): Test this
     self.new_k = (self.k 
@@ -43,9 +44,9 @@ class FFGAN():
     # Build optimizers. Make sure to only train certain variables.
     optimizer = tf.train.AdamOptimizer()
     self.encoder_vars = tf.get_collection(
-        tf.GraphKeys.GLOBAL_VARIABLES, scope="descrim")
+        tf.GraphKeys.GLOBAL_VARIABLES, scope="encoder")
     self.decoder_gen_vars = tf.get_collection(
-        tf.GraphKeys.GLOBAL_VARIABLES, scope="generator")
+        tf.GraphKeys.GLOBAL_VARIABLES, scope="decoder_generator")
     self.train_descrim = slim.learning.create_train_op(
         self.descrim_loss, 
         optimizer,
@@ -56,7 +57,7 @@ class FFGAN():
         variables_to_train=self.decoder_gen_vars)
     # Training step for GAN
     self.gan_train_op = tf.group(
-        self.train_descrim, self.update_k)
+        self.train_descrim, self.train_generator, self.update_k)
 
     self.convergence = (
         self.img_diff_real 
@@ -118,15 +119,15 @@ class FFGAN():
     #TODO(Chase) Add skip connections.
     net = slim.fully_connected(encoding, 256)
     net = tf.reshape(net, [-1, 16, 16, 1])
-    net = slim.conv2d(net, 32, [3, 3], scope="conv1_3x3")
+    net = slim.conv2d_transpose(net, 32, [3, 3], scope="conv1_3x3")
     net = tf.image.resize_images(net, [int(i) * 2 for i in net.shape[1:3]])
-    net = slim.conv2d(net, 128, [3, 3], scope="conv2_3x3")
+    net = slim.conv2d_transpose(net, 128, [3, 3], scope="conv2_3x3")
     net = tf.image.resize_images(net, [int(i) * 2 for i in net.shape[1:3]])
-    net = slim.conv2d(net, 128, [3, 3], scope="conv3_3x3")
-    net = slim.conv2d(net, 64, [5, 5], scope="conv4_5x5")
+    net = slim.conv2d_transpose(net, 128, [3, 3], scope="conv3_3x3")
+    net = slim.conv2d_transpose(net, 64, [5, 5], scope="conv4_5x5")
     net = tf.image.resize_images(net, [int(i) * 2 for i in net.shape[1:3]])
-    net = slim.conv2d(net, 64, [5, 5], scope="conv5_5x5")
-    net = slim.conv2d(net, 3, [11, 11], scope="conv6_11x11")
+    net = slim.conv2d_transpose(net, 64, [5, 5], scope="conv5_5x5")
+    net = slim.conv2d_transpose(net, 3, [11, 11], scope="conv6_11x11")
     return net
 
 
