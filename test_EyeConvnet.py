@@ -2,90 +2,31 @@ import EyeConvnet
 import tensorflow as tf
 import numpy as np
 import pytest
+import mltest
+
+slim = tf.contrib.slim 
 
 
 def setup_function(fnc):
     tf.reset_default_graph()
 
+def setup():
+    mltest.setup()
 
-def test_sanity_build():
+def test_suite():
     face_tensor = tf.placeholder(tf.float32, (None, 128, 128, 3))
     left_eye_tensor = tf.placeholder(tf.float32, (None, 36, 60, 3))
     right_eye_tensor = tf.placeholder(tf.float32, (None, 36, 60, 3))
     face_pts_tensor = tf.placeholder(tf.float32, (None, 102))
-    is_training = False
-    EyeConvnet.EyeConvnet(
-        False, face_tensor, left_eye_tensor, right_eye_tensor,
+    model = EyeConvnet.EyeConvnet(
+        True, face_tensor, left_eye_tensor, right_eye_tensor,
                           face_pts_tensor)
+    opt = tf.train.AdamOptimizer()
+    train = slim.learning.create_train_op(model.prediction, opt)
+    mltest.test_suite(model.prediction, train, feed_dict={
+      face_tensor: np.random.normal(size=(1, 128, 128, 3)) + 1000,
+      left_eye_tensor: np.random.normal(size=(1, 36, 60, 3)),
+      right_eye_tensor: np.random.normal(size=(1, 36, 60, 3)),
+      face_pts_tensor: np.random.normal(size=(1, 102))
+    })
 
-
-def test_variables_change():
-    with tf.variable_scope("Convnet"):
-        face_tensor = tf.placeholder(tf.float32, (None, 128, 128, 3))
-        left_eye_tensor = tf.placeholder(tf.float32, (None, 36, 60, 3))
-        right_eye_tensor = tf.placeholder(tf.float32, (None, 36, 60, 3))
-        face_pts_tensor = tf.placeholder(tf.float32, (None, 102))
-        is_training = False
-        model = EyeConvnet.EyeConvnet(
-            False, face_tensor, left_eye_tensor, right_eye_tensor,
-                              face_pts_tensor)
-        opt = tf.train.AdamOptimizer()
-        train = opt.minimize(model.prediction)
-        sess = tf.Session()
-        sess.run(tf.global_variables_initializer())
-        before = sess.run(tf.trainable_variables())
-        _ = sess.run(train, feed_dict={
-                     face_tensor: np.ones((1, 128, 128, 3)),
-                     left_eye_tensor: np.ones((1, 36, 60, 3)),
-                     right_eye_tensor: np.ones((1, 36, 60, 3)),
-                     face_pts_tensor: np.ones((1, 102))
-                     })
-        after = sess.run(tf.trainable_variables())
-        for b, a, n in zip(before, after, [n.name for n in tf.trainable_variables()]):
-            # Make sure something changed.
-            assert (b != a).any()
-
-
-def test_needs_inputs():
-    with tf.variable_scope("Convnet"):
-        face_tensor = tf.placeholder(tf.float32, (None, 128, 128, 3))
-        left_eye_tensor = tf.placeholder(tf.float32, (None, 36, 60, 3))
-        right_eye_tensor = tf.placeholder(tf.float32, (None, 36, 60, 3))
-        face_pts_tensor = tf.placeholder(tf.float32, (None, 102))
-        is_training = False
-
-        model = EyeConvnet.EyeConvnet(
-            False, face_tensor, left_eye_tensor, right_eye_tensor,
-                              face_pts_tensor)
-        opt = tf.train.AdamOptimizer()
-        train = opt.minimize(model.prediction)
-        sess = tf.Session()
-        sess.run(tf.global_variables_initializer())
-        # No face_pts
-        with pytest.raises(tf.errors.InvalidArgumentError):
-            _ = sess.run(model.prediction, feed_dict={
-                         face_tensor: np.ones((1, 128, 128, 3)),
-                         left_eye_tensor: np.ones((1, 36, 60, 3)),
-                         right_eye_tensor: np.ones((1, 36, 60, 3)),
-                         })
-        # No right eye
-        with pytest.raises(tf.errors.InvalidArgumentError):
-            _ = sess.run(model.prediction, feed_dict={
-                         face_tensor: np.ones((1, 128, 128, 3)),
-                         left_eye_tensor: np.ones((1, 36, 60, 3)),
-                         face_pts_tensor: np.ones((1, 102))
-                         })
-        # No left eye
-        with pytest.raises(tf.errors.InvalidArgumentError):
-            _ = sess.run(train, feed_dict={
-                         face_tensor: np.ones((1, 128, 128, 3)),
-                         right_eye_tensor: np.ones((1, 36, 60, 3)),
-                         face_pts_tensor: np.ones((1, 102))
-                         })
-        # No face
-        with pytest.raises(tf.errors.InvalidArgumentError):
-            _ = sess.run(train, feed_dict={
-                         left_eye_tensor: np.ones((1, 36, 60, 3)),
-                         right_eye_tensor: np.ones((1, 36, 60, 3)),
-                         face_pts_tensor: np.ones((1, 102))
-                         })
