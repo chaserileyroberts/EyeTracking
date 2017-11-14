@@ -37,7 +37,7 @@ class GAN_Trainer:
     sess.run(self.init_op)
     merged = tf.summary.merge_all()
     slim.learning.train(
-      self.model.gan_train_op,
+      self.model.train_descrim, #gan_train_op,
       self.save_dest,
       number_of_steps=training_steps,
       init_op=self.init_op,
