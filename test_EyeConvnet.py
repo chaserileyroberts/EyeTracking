@@ -2,7 +2,7 @@ import EyeConvnet
 import tensorflow as tf
 import numpy as np
 import pytest
-import mltest
+import mltest.mltest as mltest
 
 slim = tf.contrib.slim 
 
