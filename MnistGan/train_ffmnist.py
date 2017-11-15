@@ -7,7 +7,7 @@ slim = tf.contrib.slim
 
 class MnistGanTrainer:
   def __init__(self, batch_size, save_dest):
-    mndata =  MNIST('/home/lolwat/Dropbox/MNIST')
+    mndata =  MNIST('./')
     images, labels = mndata.load_training()
     images = np.array(images, dtype=np.float32)
     labels = np.array(labels, dtype=np.float32)
@@ -23,7 +23,6 @@ class MnistGanTrainer:
     self.save_dest = save_dest
 
   def train(self, training_steps=100000):
-    print(training_steps)
     self.init_op = tf.global_variables_initializer()
     if self.save_dest is not None:
       saver = tf.train.Saver(
@@ -44,4 +43,5 @@ class MnistGanTrainer:
     
 
 if __name__ == '__main__':
-  MnistGanTrainer(1, None)
+  model = MnistGanTrainer(1, "./mnist_events")
+  model.train(100000)
