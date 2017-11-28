@@ -17,9 +17,9 @@ class FFGAN():
     self.prop_gain = 0.001
     self.encoding_size = z_vector.shape[1]
     self.k = tf.Variable(0.0, name="k", trainable=False)
-    encoder_template = tf.make_template("descriminator", self.make_encoder)
+    encoder_template = tf.make_template("descriminator/encoder", self.make_encoder)
     decoder_gen_template = tf.make_template(
-        "descriminator", self.make_decoder_generator)
+        "descriminator/decoder", self.make_decoder_generator)
     # Make encoder/decoder for the real images.
     self.encoding_real = encoder_template(real_img, self.encoding_size)
     self.decoded_real = decoder_gen_template(self.encoding_real)
