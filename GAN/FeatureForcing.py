@@ -35,7 +35,7 @@ class FFGAN():
         real_img, self.decoded_real)
     self.img_diff_fake = tf.losses.mean_squared_error(
         self.gen_out, self.decoded_fake)
-    self.descrim_loss = self.img_diff_real #- self.k * self.img_diff_fake
+    self.descrim_loss = self.img_diff_real - self.k * self.img_diff_fake
     self.gen_loss = self.img_diff_fake
     # TODO(chase): Test this
     self.new_k = (self.k 
@@ -58,7 +58,7 @@ class FFGAN():
         variables_to_train=self.generator_vars)
     # Training step for GAN
     self.gan_train_op = tf.group(
-        self.train_descrim, self.update_k) #, self.train_generator)
+        self.train_descrim, self.train_generator, self.update_k)
 
     self.convergence = (
         self.img_diff_real 
