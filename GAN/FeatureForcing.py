@@ -58,7 +58,7 @@ class FFGAN():
         variables_to_train=self.generator_vars)
     # Training step for GAN
     self.gan_train_op = tf.group(
-        self.train_descrim, self.train_generator, self.update_k)
+        self.train_descrim, self.update_k, self.train_generator)
 
     self.convergence = (
         self.img_diff_real 
@@ -130,8 +130,8 @@ class FFGAN():
     net = slim.conv2d_transpose(net, 64, [5, 5], scope="conv4_5x5")
     net = tf.image.resize_images(net, [int(i) * 2 for i in net.shape[1:3]],
         tf.image.ResizeMethod.NEAREST_NEIGHBOR)
-    net = slim.conv2d_transpose(net, 64, [5, 5], scope="conv5_5x5")
-    net = slim.conv2d_transpose(net, 3, [11, 11], scope="conv6_11x11",
+    net = slim.conv2d(net, 64, [5, 5], scope="conv5_5x5")
+    net = slim.conv2d(net, 3, [1, 1], scope="conv6_11x11",
         activation_fn=None)
     return net
 
