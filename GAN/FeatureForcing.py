@@ -71,6 +71,7 @@ class FFGAN():
     tf.summary.scalar("gen_loss", self.gen_loss)
     tf.summary.scalar("descrim_loss", self.descrim_loss)
     tf.summary.scalar("k", self.k)
+    tf.summary.scalar("real_image_diff", self.img_diff_real)
     tf.summary.scalar("model_convergence", self.convergence)
     tf.summary.image("real_image", 
             Preprocess.image_correction(self.real_img))
