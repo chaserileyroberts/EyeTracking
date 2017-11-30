@@ -25,7 +25,8 @@ class FFGAN():
     self.decoded_real = decoder_gen_template(self.encoding_real)
 
     # Make results for the generated images
-    self.gen_out = decoder_gen_template(z_vector)
+    with tf.variable_scope("generator"):  
+        self.gen_out = self.make_decoder_generator(z_vector)
     self.encoding_fake = encoder_template(self.gen_out, self.encoding_size)
     self.decoded_fake = decoder_gen_template(self.encoding_fake)
 
@@ -46,7 +47,7 @@ class FFGAN():
     self.encoder_vars = tf.get_collection(
         tf.GraphKeys.GLOBAL_VARIABLES, scope="descriminator")
     self.generator_vars = tf.get_collection(
-        tf.GraphKeys.GLOBAL_VARIABLES, scope="descriminator")
+        tf.GraphKeys.GLOBAL_VARIABLES, scope="generator")
     self.train_descrim = slim.learning.create_train_op(
         self.descrim_loss, 
         optimizer,
@@ -57,7 +58,7 @@ class FFGAN():
         variables_to_train=self.generator_vars)
     # Training step for GAN
     self.gan_train_op = tf.group(
-        self.train_descrim, self.update_k)
+        self.train_descrim, self.train_generator, self.update_k)
 
     self.convergence = (
         self.img_diff_real 
@@ -106,7 +107,7 @@ class FFGAN():
     net = slim.conv2d(net, 32, [1, 1], scope="conv6_1x1")
     net = slim.flatten(net)
     net = slim.fully_connected(net, 256)
-    net = slim.fully_connected(net, int(encoding_size), activation_fn=tf.tanh)
+    net = slim.fully_connected(net, int(encoding_size), activation_fn=None)
     return net
 
   def make_decoder_generator(self, encoding):
