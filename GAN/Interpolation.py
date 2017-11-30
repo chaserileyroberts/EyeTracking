@@ -18,6 +18,7 @@ if __name__ == '__main__':
   saver.restore(sess, path)
   vectors = []
   for i in np.random.choice(100, 1990):
+    print(i)
     face = np.reshape(faces[i], (1, 128, 128, 3))
     flipped_face = np.fliplr(face)
     vec1 = sess.run(model.encoding_real, feed_dict={
@@ -31,6 +32,6 @@ if __name__ == '__main__':
   values = []
   for i,vec1 in enumerate(vectors):
     for j,vec2 in enumerate(vectors[i+1:]):
-      values.append(math.abs(
+      values.append(math.fabs(
           scipy.spatial.distance.cosine(vec1, vec2) - 1))
   print(sum(values)/len(values))
