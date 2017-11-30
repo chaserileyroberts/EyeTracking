@@ -25,7 +25,7 @@ if __name__ == '__main__':
         })
     diff_vec = vec1 - vec2
     vectors.append(diff_vec)
-  values = 
+  values = []
   for i,vec1 in enumerate(vectors):
     for j,vec2 in enumerate(vectors[i+1:]):
       values.append(math.abs(
