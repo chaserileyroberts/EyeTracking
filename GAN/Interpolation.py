@@ -11,7 +11,7 @@ if __name__ == '__main__':
   z_tensor = tf.placeholder(tf.float32, (None, 128))
   model = FFGAN(image_tensor, z_tensor)
   faces = loadmat('/media/roberc4/kang/final_dataset/kang/day01/Center/data.mat')['face']
-  saver = tf.save.Saver()
+  saver = tf.train.Saver()
   path = tf.train.latest_checkpoint('/media/roberc4/kang/chase_models/kang_began')
   sess = tf.Session()
   sess.run(tf.global_variables_initializer())
