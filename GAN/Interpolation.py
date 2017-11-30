@@ -17,7 +17,7 @@ if __name__ == '__main__':
   sess.run(tf.global_variables_initializer())
   saver.restore(sess, path)
   vectors = []
-  for i in np.random.choice(100, 1990):
+  for i in np.random.choice(1990, 100):
     print(i)
     face = np.reshape(faces[i], (1, 128, 128, 3))
     flipped_face = np.fliplr(face)
