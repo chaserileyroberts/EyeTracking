@@ -12,7 +12,7 @@ if __name__ == '__main__':
   model = FFGAN(image_tensor, z_tensor)
   faces = loadmat('/media/roberc4/kang/final_dataset/kang/day01/Center/data.mat')['face']
   sess = tf.Session()
-  sess.run(tf.global_variables_initalizer())
+  sess.run(tf.global_variables_initializer())
   vectors = []
   for i in np.random.choice(100, range(1990)):
     face = np.reshape(faces[random.randint(0, 1990)], (1, 128, 128, 3))
