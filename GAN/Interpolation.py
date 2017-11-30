@@ -11,11 +11,14 @@ if __name__ == '__main__':
   z_tensor = tf.placeholder(tf.float32, (None, 128))
   model = FFGAN(image_tensor, z_tensor)
   faces = loadmat('/media/roberc4/kang/final_dataset/kang/day01/Center/data.mat')['face']
+  saver = tf.save.Saver()
+  path = tf.train.latest_checkpoint('/media/roberc4/kang/chase_models/kang_began')
   sess = tf.Session()
   sess.run(tf.global_variables_initializer())
+  saver.restore(sess, path)
   vectors = []
-  for i in np.random.choice(100, range(1990)):
-    face = np.reshape(faces[random.randint(0, 1990)], (1, 128, 128, 3))
+  for i in np.random.choice(100, 1990):
+    face = np.reshape(faces[i], (1, 128, 128, 3))
     flipped_face = np.fliplr(face)
     vec1 = sess.run(model.encoding_real, feed_dict={
           image_tensor: face
