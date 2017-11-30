@@ -106,7 +106,7 @@ class FFGAN():
     net = slim.conv2d(net, 32, [1, 1], scope="conv6_1x1")
     net = slim.flatten(net)
     net = slim.fully_connected(net, 256)
-    net = slim.fully_connected(net, int(encoding_size), activation_fn=None)
+    net = slim.fully_connected(net, int(encoding_size), activation_fn=tf.tanh)
     return net
 
   def make_decoder_generator(self, encoding):
